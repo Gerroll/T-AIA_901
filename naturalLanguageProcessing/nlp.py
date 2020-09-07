@@ -1,5 +1,7 @@
 
-class PathFinder:
-	self.param = None
+
+class Nlp:
 	def __init__(self, param):
 		self.param = param
+		
+
