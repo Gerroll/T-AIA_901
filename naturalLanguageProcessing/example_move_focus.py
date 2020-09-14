@@ -163,14 +163,15 @@ def test_model(nlp):
     texts = [
         "Paris Montpellier",
         "je voudrai aller de Lyon à Brest",
-        "quel est le chemin de Toulouse à Lille",
         "j'aimerai faire un trajet Rennes Strasbourg",
         "itineraire Paris Montpellier",
         "je voudrai manger une glace à Montpellier",
         "je voudrai un aller-retour Paris - Montpellier",
         "trajet Albi - Poitiers",
         "Jean veut aller à Arcachon",
-        "Je veux les filles de Madrid à Paris"
+        "Je veux les filles de Madrid à Paris",
+        "quel est le meilleur chemin entre Toulouse et Lille",
+        "j'envie d'aller jusqu'à Paris depuis Lyon"
     ]
     docs = nlp.pipe(texts)
 
