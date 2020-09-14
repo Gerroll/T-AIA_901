@@ -28,7 +28,7 @@ class VoiceProcessing:
         source = sr.AudioFile(pathfile)
         with source:
             r.adjust_for_ambient_noise(source)
-            audio = r.record(source)
+            audio = r.record(source, duration=10)
 
             said = ""
 
@@ -40,7 +40,6 @@ class VoiceProcessing:
 
             except sr.UnknownValueError as e:
                 print("Unintelligible text, please provide a new record ")
-
         return said
 
         print(r.recognize_google(audioToAnalyze, language='fr-FR'))
