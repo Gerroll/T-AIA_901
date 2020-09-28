@@ -16,9 +16,9 @@ class VoiceProcessing:
                 said = self.recognizer.recognize_google(audio, language='fr-FR')
                 print(said)
             except sr.RequestError as e:
-                print("Connection problem, please try again later")
+               raise e
             except sr.UnknownValueError as e :
-                print("Unintelligible text, please provide a new record ")
+               raise e
 
         return said
     ### pathfile : chemin relatif depuis app.py
@@ -36,10 +36,10 @@ class VoiceProcessing:
                 said = r.recognize_google(audio, language='fr-FR')
                 print(said)
             except sr.RequestError as e:
-                print("Connection problem, please try again later")
+                raise e
 
             except sr.UnknownValueError as e:
-                print("Unintelligible text, please provide a new record ")
+                raise e
         return said
 
         print(r.recognize_google(audioToAnalyze, language='fr-FR'))
