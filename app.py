@@ -6,8 +6,8 @@ def main():
 	print('Hello world !')
 	NLP = Nlp()
 	NLP.train()
- 
-	# example a virer lors de l'association des components
+
+	# example a virer lors de l association des components
 	try:
 		print(NLP.predict("Je souhaiterai aller à Besancon"))
 	except Exception as identifier:
