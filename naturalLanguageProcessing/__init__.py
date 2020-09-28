@@ -1,1 +1,2 @@
 from .nlp import Nlp
+from .train_data import TRAIN_DATA
