@@ -83,13 +83,6 @@ TRAIN_DATA = [
             "deps" : ["-", "ROOT", "FAIM", "-", "FAIM", "-", "-", "-", "END"]
         }
     ),
-    # (
-    #     "je voudrai un Paris-Brest",
-    #     {
-    #         "heads" : [1, 1, 3, 5, 3, 1],
-    #         "deps" : ["-", "ROOT", "-", "FAIM", "FAIM", "FAIM"]
-    #     }
-    # ),
     (
         "itinéraire Draguignan Cournonteral",
         {
@@ -138,5 +131,13 @@ TRAIN_DATA = [
             "heads": [0, 2, 0, 4, 2, 6, 4],
             "deps": ["ROOT", "-", "MOVE", "-", "START", "-", "END"]
         }
+    ),
+    (
+        "quel est le plus rapide pour aller à Bergerac",
+        {
+            "heads": [1, 1, 3, 4, 1, 6, 4, 7, 6],
+            "deps": ["-", "ROOT", "-", "-", "QUALITY", "-", "MOVE", "-", "END"]
+        }
+
     )
 ]

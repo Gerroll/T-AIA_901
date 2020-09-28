@@ -97,10 +97,13 @@ class Nlp:
 		for t in doc:
 			if (t.dep_ == "MOVE"):
 				validInstruction = True
-			if (t.dep_ == "START" and t.text != "-"):
+			if (t.dep_ == "START" and t.text != "-" and t.ent_type_ == "LOC"):
 				start = t.text
-			if (t.dep_ == "END" and t.text != "-"):
+			if (t.dep_ == "END" and t.text != "-" and t.ent_type_ == "LOC"):
 				end = t.text
+			if (t.dep_ == "FAIM"):
+				validInstruction = False
+				break
 
 		if (end == None or validInstruction == False):
 			raise Exception("Bad Phrase")
