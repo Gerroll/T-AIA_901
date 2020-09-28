@@ -9,23 +9,23 @@ def main():
 	try:
 		print(NLP.predict("Je souhaiterai aller à Besancon"))
 	except Exception as identifier:
-		pass
+		print("Bad Phrase")
 	try:
 		print(NLP.predict("je veux un itinéraire pour faire Montpellier - Nice"))
 	except Exception as identifier:
-		pass
+		print("Bad Phrase")
 	try:
-		print(NLP.predict("je veux un itinéraire pour faire Paris Brest"))
+		print(NLP.predict("je veux un itinéraire pour faire Paris - Brest"))
 	except Exception as identifier:
-		pass
+		print("Bad Phrase")
 	try:
 		print(NLP.predict("je veux manger un Paris - Brest"))
 	except Exception as identifier:
-		pass
+		print("Bad Phrase")
 	try:
 		print(NLP.predict("je veux manger une saucisse de Strasbourg à Brest"))
 	except Exception as identifier:
-		pass
+		print("Bad Phrase")
 
 
 if __name__ == "__main__":

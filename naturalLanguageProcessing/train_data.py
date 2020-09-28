@@ -7,13 +7,6 @@ TRAIN_DATA = [
         },
     ),
     (
-        "Trouve moi un itinéraire pour partir de Montpellier vers Bordeaux",
-        {
-            "heads": [0, 0, 3, 0, 5, 0, 7, 3, 9, 7],
-            "deps": ["ROOT", "-", "-", "MOVE", "-", "MOVE", "-", "START", "-", "END"]
-        }
-    ),
-    (
         "Je voudrais aller demain de Nîmes à Paris pour 8h",
         {
             "heads": [1, 1, 1, 2, 5, 2, 7, 5, 9, 3],
@@ -90,13 +83,13 @@ TRAIN_DATA = [
             "deps" : ["-", "ROOT", "FAIM", "-", "FAIM", "-", "-", "-", "END"]
         }
     ),
-    (
-        "je voudrai un Paris-Brest",
-        {
-            "heads" : [1, 1, 3, 5, 3, 1],
-            "deps" : ["-", "ROOT", "-", "FAIM", "FAIM", "FAIM"]
-        }
-    ),
+    # (
+    #     "je voudrai un Paris-Brest",
+    #     {
+    #         "heads" : [1, 1, 3, 5, 3, 1],
+    #         "deps" : ["-", "ROOT", "-", "FAIM", "FAIM", "FAIM"]
+    #     }
+    # ),
     (
         "itinéraire Draguignan Cournonteral",
         {
@@ -116,6 +109,34 @@ TRAIN_DATA = [
         {
             "heads": [0, 2, 4, 4, 0],
             "deps": ["MOVE", "-", "END", "-", "START"]
+        }
+    ),
+    (
+        "donne moi l'itinéraire de Strasbourg à Nice",
+        {
+            "heads": [0, 0, 2, 0, 5, 3, 7, 5],
+            "deps": ["ROOT", "-", "-", "MOVE", "-", "START", "-", "END"]
+        }
+    ),
+    (
+        "je veux faire un trajet Limoges Tours",
+        {
+            "heads": [1, 2, 2, 4, 2, 4, 5],
+            "deps": ["-", "-", "ROOT", "-", "MOVE", "START", "END"]
+        }
+    ),
+    (
+        "comment faire pour partir à Nimes",
+        {
+            "heads": [1, 1, 3, 1, 5, 3],
+            "deps": ["-", "ROOT", "-", "MOVE", "-", "END"]
+        }
+    ),
+    (
+        "faire un aller de Lyon à Poitiers",
+        {
+            "heads": [0, 2, 0, 4, 2, 6, 4],
+            "deps": ["ROOT", "-", "MOVE", "-", "START", "-", "END"]
         }
     )
 ]
