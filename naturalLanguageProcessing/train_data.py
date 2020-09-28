@@ -49,7 +49,7 @@ TRAIN_DATA = [
         },
     ),
     (
-        "donne moi l'itineraire de Marseille à Grenoble",
+        "donne moi l'itinéraire de Marseille à Grenoble",
         {
             "heads": [0, 0, 3, 0, 5, 3, 7, 5],
             "deps": ["ROOT", "-", "-", "MOVE", "-", "START", "-", "END"],
@@ -93,7 +93,7 @@ TRAIN_DATA = [
     (
         "je voudrai un Paris-Brest",
         {
-            "heads" : [1, 1, 3, 1, 3, 3],
+            "heads" : [1, 1, 3, 5, 3, 1],
             "deps" : ["-", "ROOT", "-", "FAIM", "FAIM", "FAIM"]
         }
     ),
@@ -101,21 +101,21 @@ TRAIN_DATA = [
         "itinéraire Draguignan Cournonteral",
         {
             "heads": [0, 0, 1],
-            "deps" : ["ROOT", "START", "END"]
+            "deps" : ["MOVE", "START", "END"]
         }
     ),
-    # (
-    #     "donne moi le trajet vers Nantes depuis Nice",
-    #     {
-    #         "heads": [0, 0, 3, 0, 5, 3, 0, 5],
-    #         "deps": ["ROOT", "-", "-", "MOVE", "-", "END", "-", "START"]
-    #     }
-    # ),
-    # (
-    #     "itinéraire à Rennes depuis Perpignan",
-    #     {
-    #         "heads": [0, 0, 3, 0, 5],
-    #         "deps": ["MOVE", "-", "END", "-", "START"]
-    #     }
-    # )
+    (
+        "donne moi le trajet vers Nantes depuis Nice",
+        {
+            "heads": [0, 0, 3, 0, 5, 3, 0, 5],
+            "deps": ["ROOT", "-", "-", "MOVE", "-", "END", "-", "START"]
+        }
+    ),
+    (
+        "itinéraire à Rennes depuis Perpignan",
+        {
+            "heads": [0, 2, 4, 4, 0],
+            "deps": ["MOVE", "-", "END", "-", "START"]
+        }
+    )
 ]
