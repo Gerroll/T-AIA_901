@@ -8,7 +8,7 @@ def main():
 	voice_process = VoiceProcessing()
 	try:
 		resultFromVoice = voice_process.from_audio()
-		# Usecase: handling from an audiofile
+		#Usecase: handling from an audiofile
 	    #resultFromVoice = voice_process.from_file(pathfile="test_reco.flac")
 
 	except sr.RequestError as e:
