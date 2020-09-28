@@ -89,7 +89,6 @@ class Nlp:
 
 	def predict(self, instruction):
 		doc = self.nlp(instruction)
-		print([(t.text, t.dep_) for t in doc if t.dep_ != '-'])
 
 		validInstruction = False
 		start = "Montpellier" # default Location (geoloc ??)
