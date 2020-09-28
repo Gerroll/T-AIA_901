@@ -128,4 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# NLP Model
 naturalLanguageProcessing/nlp_model/
+
+# Pipfile
+Pipfile
+Pipfile.lock
