@@ -6,10 +6,10 @@ import spacy
 from pathlib import Path
 from spacy.util import minibatch, compounding
 
-from train_data import TRAIN_DATA
+from .train_data import TRAIN_DATA
 
 class Nlp:
-    
+
 	def __init__(self, default_model="fr_core_news_sm", load_dir="./naturalLanguageProcessing/nlp_model", output_dir="./naturalLanguageProcessing/nlp_model"):
 		self.default_model = default_model
 		self.load_dir = load_dir
