@@ -1,6 +1,12 @@
 from naturalLanguageProcessing import Nlp
 from pathFindingProcessing import PathFinder
 from voiceProcessing import VoiceProcessing
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
 def main():
 	print('Hello world !')
