@@ -9,7 +9,7 @@ from flask import abort
 app = Flask(__name__)
 
 """ Just home route """
-@app.route('/', methods=['GET'])
+@app.route('/')
 def hello():
   return 'Hello World, do you like trains ?'
 
