@@ -37,6 +37,7 @@ wasabi = "==0.8.0"
 wrapt = "==1.12.1"
 zipp = "==3.1.0"
 flask = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
