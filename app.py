@@ -59,7 +59,7 @@ def main_entry():
               # download audio and store it in temporary file
               audio_file = requests.get(url)
 
-              open('c:/users/LikeGeeks/downloads/tmp.mpa', 'wb').write(audio_file.content)
+              open('./tmp.mpa', 'wb').write(audio_file.content)
               # Use voice processing to transform to texts
 
               # Use nlp processing to get start and finish
