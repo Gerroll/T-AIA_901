@@ -12,8 +12,7 @@ import time
 app = Flask(__name__)
 
 # Verify token. Should be a random string.
-VERIFY_TOKEN = "EAAwCqdXoSnYBANZCKxZAZAp7Xu4bwwJ6ZCUSIEa7gHvQt55oDielASlZB6ipIwdZCsNTkysCK3eYZCZCZAnowwRXz2twu4RTo1yWvfm77cGsGu6XMlAgXtN89Nerqg5iQhUiLq54DxP4j57xOY3BqNlzchEzeP740wAP8IhROfhLyXwZDZD"
-ACCESS_TOKEN = "949bdd4abd13af42a8d0b25363d15080"
+VERIFY_TOKEN = "EAAwCqdXoSnYBAGvZAVkROulrJLGagS2DgeAo2SaHMlbZAvZAOflFgm1TuzR2QeWhmJt6OpbQZBBUq1GFNhO5YGmnpmaOdocjhj3FiTj5FZAztYZCsAUeDBk7CZCeWjCDbwzmURyFSwddN5LXnS3ux7aY9a9Ms53sZAZACvI3258tA0gZDZD"
 
 """ Just home route """
 @app.route('/')
@@ -149,7 +148,7 @@ def main_entry():
               }
 
               # Send the result as a list template message 
-              requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', data=payload)
+              requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={VERIFY_TOKEN}', data=payload)
 
               response = requests.json()
 
