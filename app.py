@@ -95,7 +95,7 @@ def main_entry():
                               "title": "View",
                               "type": "web_url",
                               "url": "https://peterssendreceiveapp.ngrok.io/collection",
-                              "messenger_extensions": true,
+                              "messenger_extensions": True,
                               "webview_height_ratio": "tall",
                               "fallback_url": "https://peterssendreceiveapp.ngrok.io/"            
                             }
@@ -107,7 +107,7 @@ def main_entry():
                           "default_action": {
                             "type": "web_url",
                             "url": "https://peterssendreceiveapp.ngrok.io/view?item=100",
-                            "messenger_extensions": false,
+                            "messenger_extensions": False,
                             "webview_height_ratio": "tall"
                           }
                         },
@@ -118,7 +118,7 @@ def main_entry():
                           "default_action": {
                             "type": "web_url",
                             "url": "https://peterssendreceiveapp.ngrok.io/view?item=101",
-                            "messenger_extensions": true,
+                            "messenger_extensions": True,
                             "webview_height_ratio": "tall",
                             "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
                           },
@@ -127,7 +127,7 @@ def main_entry():
                               "title": "Shop Now",
                               "type": "web_url",
                               "url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
-                              "messenger_extensions": true,
+                              "messenger_extensions": True,
                               "webview_height_ratio": "tall",
                               "fallback_url": "https://peterssendreceiveapp.ngrok.io/"            
                             }
