@@ -7,9 +7,9 @@ import speech_recognition as sr
 def main():
 	voice_process = VoiceProcessing()
 	try:
-		resultFromVoice = voice_process.from_audio()
+		#resultFromVoice = voice_process.from_audio()
 		#Usecase: handling from an audiofile
-	    #resultFromVoice = voice_process.from_file(pathfile="test_reco.flac")
+	    resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
 
 	except sr.RequestError as e:
 		print("Connection problem, please try again later")
