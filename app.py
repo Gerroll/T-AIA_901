@@ -7,7 +7,13 @@ from flask import Flask
 from flask import request
 from flask import abort
 import requests
+import os
+import time
 app = Flask(__name__)
+
+# Verify token. Should be a random string.
+VERIFY_TOKEN = "EAAwCqdXoSnYBANZCKxZAZAp7Xu4bwwJ6ZCUSIEa7gHvQt55oDielASlZB6ipIwdZCsNTkysCK3eYZCZCZAnowwRXz2twu4RTo1yWvfm77cGsGu6XMlAgXtN89Nerqg5iQhUiLq54DxP4j57xOY3BqNlzchEzeP740wAP8IhROfhLyXwZDZD"
+ACCESS_TOKEN = "949bdd4abd13af42a8d0b25363d15080"
 
 """ Just home route """
 @app.route('/')
@@ -19,8 +25,6 @@ def hello():
 def main_entry():
   # Verify token webhook to discuss with the chatbot
   if request.method == 'GET': 
-    # Your verify token. Should be a random string.
-    VERIFY_TOKEN = "EAAwCqdXoSnYBANZCKxZAZAp7Xu4bwwJ6ZCUSIEa7gHvQt55oDielASlZB6ipIwdZCsNTkysCK3eYZCZCZAnowwRXz2twu4RTo1yWvfm77cGsGu6XMlAgXtN89Nerqg5iQhUiLq54DxP4j57xOY3BqNlzchEzeP740wAP8IhROfhLyXwZDZD"
     # Parse the query params
     mode = request.args.get('hub.mode')
     token = request.args.get('hub.verify_token')
@@ -40,6 +44,7 @@ def main_entry():
   # We can talk to the chatbot
   elif request.method == 'POST':
     data = request.get_json(force=True)
+    ts = time.time()
     print(data)
     # Checks this is an event from a page subscription
     if data['object'] == 'page':
@@ -47,27 +52,108 @@ def main_entry():
       for entry in data['entry']:
         # Gets the message. entry.messaging is an array, but will only ever contain one message, so we get index 0
         webhook_data = entry['messaging'][0]
+        recipient_id = webhook_data['recipient']['id']
         print(webhook_data)
+        print(recipient_id)
 
-        if 'message' in webhook_data:
-          if 'attachment' in webhook_data['message']:
+        if webhook_data.get('message'):
+          if webhook_data['message'].get('attachment'):
             attachment = webhook_data['message']['attachment'][0]
             attachment_payload = attachment['payload']
             url = attachment_payload['url']
-
+            
             if attachment['type'] == 'audio':
               # download audio and store it in temporary file
               audio_file = requests.get(url)
+              open(f'./tmp-{ts}.mp4', 'wb').write(audio_file.content)
 
-              open('./tmp.mpa', 'wb').write(audio_file.content)
               # Use voice processing to transform to texts
 
               # Use nlp processing to get start and finish
 
               # Use pathfinding processing to get the best path
 
-              # return the result as a text message 
-        
+              # Delete the tmp audio file
+              os.remove(f'./tmp-{ts}.mp4')
+
+              # Create the payload
+              payload = {
+                "recipient":{
+                  "id": recipient_id
+                }, 
+                "message": {
+                  "attachment": {
+                    "type": "template",
+                    "payload": {
+                      "template_type": "list",
+                      "top_element_style": "compact",
+                      "elements": [
+                        {
+                          "title": "Classic T-Shirt Collection",
+                          "subtitle": "See all our colors",
+                          "image_url": "https://peterssendreceiveapp.ngrok.io/img/collection.png",          
+                          "buttons": [
+                            {
+                              "title": "View",
+                              "type": "web_url",
+                              "url": "https://peterssendreceiveapp.ngrok.io/collection",
+                              "messenger_extensions": true,
+                              "webview_height_ratio": "tall",
+                              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"            
+                            }
+                          ]
+                        },
+                        {
+                          "title": "Classic White T-Shirt",
+                          "subtitle": "See all our colors",
+                          "default_action": {
+                            "type": "web_url",
+                            "url": "https://peterssendreceiveapp.ngrok.io/view?item=100",
+                            "messenger_extensions": false,
+                            "webview_height_ratio": "tall"
+                          }
+                        },
+                        {
+                          "title": "Classic Blue T-Shirt",
+                          "image_url": "https://peterssendreceiveapp.ngrok.io/img/blue-t-shirt.png",
+                          "subtitle": "100% Cotton, 200% Comfortable",
+                          "default_action": {
+                            "type": "web_url",
+                            "url": "https://peterssendreceiveapp.ngrok.io/view?item=101",
+                            "messenger_extensions": true,
+                            "webview_height_ratio": "tall",
+                            "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                          },
+                          "buttons": [
+                            {
+                              "title": "Shop Now",
+                              "type": "web_url",
+                              "url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
+                              "messenger_extensions": true,
+                              "webview_height_ratio": "tall",
+                              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"            
+                            }
+                          ]        
+                        }
+                      ],
+                      "buttons": [
+                        {
+                          "title": "View More",
+                          "type": "postback",
+                          "payload": "payload"            
+                        }
+                      ]  
+                    }
+                  }
+                }
+              }
+
+              # Send the result as a list template message 
+              requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', data=payload)
+
+              response = requests.json()
+
+              print(response)
 
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
