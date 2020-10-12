@@ -85,8 +85,7 @@ def main_entry():
                   "attachment": {
                     "type": "template",
                     "payload": {
-                      "template_type": "list",
-                      "top_element_style": "compact",
+                      "template_type": "generic",
                       "elements":[
                         {
                           "title":"Welcome!",
@@ -111,14 +110,7 @@ def main_entry():
                             }              
                           ]      
                         }
-                      ],
-                      "buttons": [
-                        {
-                          "title": "View More",
-                          "type": "postback",
-                          "payload": "payload"            
-                        }
-                      ]  
+                      ]
                     }
                   }
                 }
