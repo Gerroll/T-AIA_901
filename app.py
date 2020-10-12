@@ -55,8 +55,8 @@ def main_entry():
         print(webhook_data)
 
         if 'message' in webhook_data:
-          if 'attachment' in webhook_data['message']:
-            attachment = webhook_data['message']['attachment'][0]
+          if 'attachments' in webhook_data['message']:
+            attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
             url = attachment_payload['url']
             
