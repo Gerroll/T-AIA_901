@@ -53,10 +53,9 @@ def main_entry():
         webhook_data = entry['messaging'][0]
         recipient_id = webhook_data['recipient']['id']
         print(webhook_data)
-        print(recipient_id)
 
-        if webhook_data.get('message'):
-          if webhook_data['message'].get('attachment'):
+        if 'message' in webhook_data:
+          if 'attachment' in webhook_data['message']:
             attachment = webhook_data['message']['attachment'][0]
             attachment_payload = attachment['payload']
             url = attachment_payload['url']
@@ -64,7 +63,7 @@ def main_entry():
             if attachment['type'] == 'audio':
               # download audio and store it in temporary file
               audio_file = requests.get(url)
-              open(f'./tmp-{ts}.mp4', 'wb').write(audio_file.content)
+              open('./tmp-{0}.mp4'.format(ts), 'wb').write(audio_file.content)
 
               # Use voice processing to transform to texts
 
@@ -73,7 +72,7 @@ def main_entry():
               # Use pathfinding processing to get the best path
 
               # Delete the tmp audio file
-              os.remove(f'./tmp-{ts}.mp4')
+              os.remove('./tmp-{0}.mp4'.format(ts))
 
               # Create the payload
               payload = {
@@ -148,11 +147,9 @@ def main_entry():
               }
 
               # Send the result as a list template message 
-              requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={VERIFY_TOKEN}', data=payload)
+              response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(VERIFY_TOKEN), json=payload)
 
-              response = requests.json()
-
-              print(response)
+              print(response.json())
 
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
