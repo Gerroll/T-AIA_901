@@ -8,10 +8,10 @@ def main():
 	voice_process = VoiceProcessing()
 	try:
 		#Usecase: handling from a microphone
-		#resultFromVoice = voice_process.from_audio()
+	    resultFromVoice = voice_process.from_audio()
 
 		#Usecase: handling from an audiofile
-	    resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
+	    #resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
 
 	except sr.RequestError as e:
 		print("Connection problem, please try again later")
@@ -25,14 +25,14 @@ def main():
 
 	print('Hello world !')
 
-	# NLP = Nlp()
-	# NLP.train()
+	NLP = Nlp()
+	NLP.train()
 	#
 	# # example a virer lors de l association des components
-	# try:
-	# 	print(NLP.predict("Je souhaiterai aller à Besancon"))
-	# except Exception as identifier:
-	# 	print("Bad Phrase")
+	try:
+		print(NLP.predict(resultFromVoice))
+	except Exception as identifier:
+	 	print("Bad Phrase")
 	# try:
 	# 	print(NLP.predict("je veux un itinéraire pour faire Montpellier - Nice"))
 	# except Exception as identifier:
