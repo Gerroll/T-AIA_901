@@ -89,26 +89,7 @@ def main_entry():
                       "elements":[
                         {
                           "title":"Welcome!",
-                          "image_url":"",
                           "subtitle":"We have the right hat for everyone.",
-                          "default_action": {
-                            "type": "web_url",
-                            "url": "",
-                            "messenger_extensions": False,
-                            "webview_height_ratio": "tall",
-                            "fallback_url": ""
-                          },
-                          "buttons":[
-                            {
-                              "type":"web_url",
-                              "url":"",
-                              "title":"View Website"
-                            },{
-                              "type":"postback",
-                              "title":"Start Chatting",
-                              "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                            }              
-                          ]      
                         }
                       ]
                     }
