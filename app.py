@@ -51,7 +51,7 @@ def main_entry():
       for entry in data['entry']:
         # Gets the message. entry.messaging is an array, but will only ever contain one message, so we get index 0
         webhook_data = entry['messaging'][0]
-        recipient_id = webhook_data['recipient']['id']
+        recipient_id = webhook_data['sender']['id']
         print(webhook_data)
 
         if 'message' in webhook_data:
@@ -76,7 +76,7 @@ def main_entry():
 
               # Create the payload
               payload = {
-                "recipient":{
+                "recipient": {
                   "id": recipient_id
                 }, 
                 "message": {
