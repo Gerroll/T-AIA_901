@@ -12,7 +12,8 @@ import time
 app = Flask(__name__)
 
 # Verify token. Should be a random string.
-VERIFY_TOKEN = "EAAwCqdXoSnYBAGvZAVkROulrJLGagS2DgeAo2SaHMlbZAvZAOflFgm1TuzR2QeWhmJt6OpbQZBBUq1GFNhO5YGmnpmaOdocjhj3FiTj5FZAztYZCsAUeDBk7CZCeWjCDbwzmURyFSwddN5LXnS3ux7aY9a9Ms53sZAZACvI3258tA0gZDZD"
+VERIFY_TOKEN = "EAAwCqdXoSnYBANZCKxZAZAp7Xu4bwwJ6ZCUSIEa7gHvQt55oDielASlZB6ipIwdZCsNTkysCK3eYZCZCZAnowwRXz2twu4RTo1yWvfm77cGsGu6XMlAgXtN89Nerqg5iQhUiLq54DxP4j57xOY3BqNlzchEzeP740wAP8IhROfhLyXwZDZD"
+ACCESS_TOKEN = "EAAwCqdXoSnYBAGvZAVkROulrJLGagS2DgeAo2SaHMlbZAvZAOflFgm1TuzR2QeWhmJt6OpbQZBBUq1GFNhO5YGmnpmaOdocjhj3FiTj5FZAztYZCsAUeDBk7CZCeWjCDbwzmURyFSwddN5LXnS3ux7aY9a9Ms53sZAZACvI3258tA0gZDZD"
 
 """ Just home route """
 @app.route('/')
@@ -51,8 +52,9 @@ def main_entry():
       for entry in data['entry']:
         # Gets the message. entry.messaging is an array, but will only ever contain one message, so we get index 0
         webhook_data = entry['messaging'][0]
-        recipient_id = webhook_data['sender']['id']
+        recipient_id = webhook_data['recipient']['id']
         print(webhook_data)
+        print(recipient_id)
 
         if 'message' in webhook_data:
           if 'attachments' in webhook_data['message']:
