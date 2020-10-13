@@ -91,7 +91,7 @@ def main_entry():
               city_start = None
               city_finish = None
               try:
-		            city_start, city_finish = NLP.predict("Je veux aller de Paris jusqu'à Montpellier")
+                city_start, city_finish = NLP.predict("Je veux aller de Paris jusqu'à Montpellier")
               except Exception as identifier:
                 # Send a message asking user to send an other file audio
                 payload_error_nlp = {
