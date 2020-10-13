@@ -58,28 +58,24 @@ def main_entry():
 
         # Get started
         if 'postback' in webhook_data and webhook_data['postback']['payload'] == 'GET_STARTED':
-          print('get started')
           # Send a text messagee explaining the chatbot
           payload = {
             "recipient": {
               "id": recipient_id
             },
             "message": {
-              "text": "Bienvenue sur ce magnifique chatbot !\nIl permet de trouver les trains les plus rapides entre 2 villes.\nAttention, il nee comprend que les messages audios.\nPour commencer à l'utiliser, envoyez un message, comme par exemple : 'Je veux aller de Paris jusqu'à Montpellier.'"
+              "text": "Bienvenue sur ce magnifique chatbot !\nIl permet de trouver les trains les plus rapides entre 2 villes.\nAttention, il ne comprend que les messages audios.\nPour commencer à l'utiliser, envoyez un message, comme par exemple : 'Je veux aller de Paris jusqu'à Montpellier.'"
             }
           }
           response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload)
-          print(response.json())
 
         if 'message' in webhook_data:
-          print('webhook')
-          if 'attachments' in webhook_data['message']:
-            print('attachment')
+          if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
-            url = attachment_payload['url']
             
             if attachment['type'] == 'audio':
+              url = attachment_payload['url']
               print('audio')
               # download audio and store it in temporary file
               audio_file = requests.get(url)
@@ -105,6 +101,14 @@ def main_entry():
                     "payload": {
                       "template_type": "generic",
                       "elements":[
+                        {
+                          "title":"Welcome!",
+                          "subtitle":"We have the right hat for everyone.",
+                        },
+                        {
+                          "title":"Welcome!",
+                          "subtitle":"We have the right hat for everyone.",
+                        }
                         {
                           "title":"Welcome!",
                           "subtitle":"We have the right hat for everyone.",
