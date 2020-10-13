@@ -45,11 +45,12 @@ def main_entry():
   elif request.method == 'POST':
     data = request.get_json(force=True)
     ts = time.time()
-    print(data)
+
     # Checks this is an event from a page subscription
     if data['object'] == 'page':
       # Iterates over each entry - there may be multiple if batched
       for entry in data['entry']:
+        payload = None
         # Gets the message. entry.messaging is an array, but will only ever contain one message, so we get index 0
         webhook_data = entry['messaging'][0]
         recipient_id = webhook_data['sender']['id']
@@ -59,7 +60,7 @@ def main_entry():
         # Get started
         if 'postback' in webhook_data and webhook_data['postback']['payload'] == 'GET_STARTED':
           # Send a text messagee explaining the chatbot
-          payload = {
+          payload_get_started = {
             "recipient": {
               "id": recipient_id
             },
@@ -67,7 +68,7 @@ def main_entry():
               "text": "Bienvenue sur ce magnifique chatbot !\nIl permet de trouver les trains les plus rapides entre 2 villes.\nAttention, il ne comprend que les messages audios.\nPour commencer à l'utiliser, envoyez un message, comme par exemple : 'Je veux aller de Paris jusqu'à Montpellier.'"
             }
           }
-          response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload)
+          response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_get_started)
 
         if 'message' in webhook_data:
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
@@ -84,6 +85,24 @@ def main_entry():
               # Use voice processing to transform to texts
 
               # Use nlp processing to get start and finish
+              NLP = Nlp()
+	            NLP.train()
+
+              city_start = None
+              city_finish = None
+              try:
+		            city_start, city_finish = NLP.predict("Je veux aller de Paris jusqu'à Montpellier")
+              except Exception as identifier:
+                # Send a message asking user to send an other file audio
+                payload_error_nlp = {
+                  "recipient": {
+                    "id": recipient_id
+                  },
+                  "message": {
+                    "text": "Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {0} et {1}, merci de recommencer avec un message audio plus précis.".format(city_start, city_finish)
+                  }
+                }
+                requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error_nlp)
 
               # Use pathfinding processing to get the best path
 
@@ -102,16 +121,16 @@ def main_entry():
                       "template_type": "generic",
                       "elements":[
                         {
-                          "title":"Welcome!",
-                          "subtitle":"We have the right hat for everyone.",
+                          "title":"Paris -> Lyon",
+                          "subtitle":"180 minutes",
                         },
                         {
-                          "title":"Welcome!",
-                          "subtitle":"We have the right hat for everyone.",
+                          "title":"Lyon -> Aix-en-provence",
+                          "subtitle":"130 minutes",
                         },
                         {
-                          "title":"Welcome!",
-                          "subtitle":"We have the right hat for everyone.",
+                          "title":"Aix-en-provence -> Montpellier",
+                          "subtitle":"80 minutes",
                         }
                       ]
                     }
@@ -121,8 +140,7 @@ def main_entry():
 
               # Send the result as a list template message 
               response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload)
-
-              print(response.json())
+              # print(response.json())
 
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
@@ -135,8 +153,7 @@ def main_entry():
 """ Main program """
 def main():
 	print('Hello world !')
-	NLP = Nlp()
-	NLP.train()
+	
 
 	# example a virer lors de l association des components
 	try:
