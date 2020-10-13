@@ -69,7 +69,7 @@ def main_entry():
               "text": "Bienvenue sur ce magnifique chatbot !\nIl permet de trouver les trains les plus rapides entre 2 villes.\nAttention, il nee comprend que les messages audios.\nPour commencer à l'utiliser, envoyez un message, comme par exemple : 'Je veux aller de Paris jusqu'à Montpellier.'"
             }
           }
-          response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), data=payload)
+          response = requests.post('https://graph.facebook.com/v8.0/me/messages?access_token={0}'.format(ACCESS_TOKEN), data=payload)
           print(response.json())
 
         if 'message' in webhook_data:
@@ -117,7 +117,7 @@ def main_entry():
               }
 
               # Send the result as a list template message 
-              response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), data=payload)
+              response = requests.post('https://graph.facebook.com/v8.0/me/messages?access_token={0}'.format(ACCESS_TOKEN), data=payload)
 
               print(response.json())
 
