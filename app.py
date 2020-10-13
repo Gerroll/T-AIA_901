@@ -108,7 +108,7 @@ def main_entry():
                         {
                           "title":"Welcome!",
                           "subtitle":"We have the right hat for everyone.",
-                        }
+                        },
                         {
                           "title":"Welcome!",
                           "subtitle":"We have the right hat for everyone.",
