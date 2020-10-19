@@ -1,3 +1,3 @@
 from pathFindingProcessing.utils.stationparser import StationParser
-from pathFindingProcessing.utils.explicitgraph import ExplicitGraph
 from pathFindingProcessing.utils.stationmapping import StationMapping
+from pathFindingProcessing.utils.networkxgraph import NetworkxGraph

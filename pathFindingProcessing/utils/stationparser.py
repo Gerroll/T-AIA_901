@@ -19,7 +19,6 @@ class StationParser:
             format_row = []
             fc = row[0]
             lr = fc.split('\t')
-            format_row.append(lr[0])
             trajet: list = lr[1].split(' - ')
             if len(trajet) >= 3:
                 print("WARNING: Malformed trajet: " + lr[1])
@@ -58,9 +57,9 @@ class StationParser:
         graph = [[0 for _ in range(lot)] for _ in range(lot)]
 
         for row in self.__data:
-            depart: str = row[1]
-            arrive: str = row[2]
-            distance: int = row[3]
+            depart: str = row[0]
+            arrive: str = row[1]
+            distance: int = row[2]
             index_of_depart = self.__stations.index(depart)
             index_of_arrive = self.__stations.index(arrive)
 

@@ -1,16 +1,17 @@
 from pathFindingProcessing.utils import StationParser
-from pathFindingProcessing.utils import ExplicitGraph
 from pathFindingProcessing.utils import StationMapping
+from pathFindingProcessing.utils import NetworkxGraph
 
 
 class PathFinder:
 	def __init__(self):
 		parser = StationParser()
 		self.matrix_graph = parser.get_matrix_graph()
+		self.raw_data = parser.get_data()
 		self.stations = parser.get_stations()
-		self.expG = ExplicitGraph(self.matrix_graph, self.stations)
+		self.networkxG = NetworkxGraph(self.raw_data)
 
-	def find_path_exp(self, depart: str, arrive: str):
+	def find_path_networkx(self, depart: str, arrive: str):
 		lowDep: str = depart.lower()
 		lowArr: str = arrive.lower()
 
@@ -22,13 +23,8 @@ class PathFinder:
 		traj = []
 		for dep in depart_station:
 			for arri in arrive_station:
-				try:
-					index_depart = self.stations.index(dep)
-					index_arrive = self.stations.index(arri)
-					traj.append(self.expG.dijkstra(index_depart, index_arrive))
-				except ValueError as ex:
-					pass
-					#print(ex)
+				if dep in self.stations and arri in self.stations:
+					traj.append(self.networkxG.dijkstra(dep, arri))
 
 		# find min trajectory
 		result = None
@@ -42,4 +38,4 @@ class PathFinder:
 
 if __name__ == "__main__":
 	pf = PathFinder()
-	print(pf.find_path_exp("gare de paris-est", "vosges"))
+	print(pf.find_path_networkx("gare de paris-est", "vosges"))
