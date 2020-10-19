@@ -1,26 +1,45 @@
-from csvimporter import CSVImporter
-from graph import Graph
+from pathFindingProcessing.utils import StationParser
+from pathFindingProcessing.utils import ExplicitGraph
+from pathFindingProcessing.utils import StationMapping
 
 
 class PathFinder:
 	def __init__(self):
-		self.ci = CSVImporter()
-		self.ci.open('../data/timetables.csv')
-		self.matrix_graph = self.ci.build_graph()
-		self.G = Graph(self.matrix_graph, self.ci.ordered_town)
+		parser = StationParser()
+		self.matrix_graph = parser.get_matrix_graph()
+		self.stations = parser.get_stations()
+		self.expG = ExplicitGraph(self.matrix_graph, self.stations)
 
-	def find_path(self, depart, arrive):
-		self.verification(arrive, depart)
-		index_depart = self.ci.ordered_town.index(depart)
-		index_arrive = self.ci.ordered_town.index(arrive)
-		return self.G.dijkstra(index_depart, index_arrive)
+	def find_path_exp(self, depart: str, arrive: str):
+		lowDep: str = depart.lower()
+		lowArr: str = arrive.lower()
 
-	def verification(self, depart, arrive):
-		if depart not in self.ci.ordered_town:
-			raise Exception("Depart not found or misspelled in the current csv")
-		if arrive not in self.ci.ordered_town:
-			raise Exception("Arrive not found or misspelled in the current csv")
+		sm: StationMapping = StationMapping()
+		depart_station: list = sm.get_stations_from_unidentified(lowDep)
+		arrive_station: list = sm.get_stations_from_unidentified(lowArr)
+
+		# compute all trajectory
+		traj = []
+		for dep in depart_station:
+			for arri in arrive_station:
+				try:
+					index_depart = self.stations.index(dep)
+					index_arrive = self.stations.index(arri)
+					traj.append(self.expG.dijkstra(index_depart, index_arrive))
+				except ValueError as ex:
+					pass
+					#print(ex)
+
+		# find min trajectory
+		result = None
+		minimum = float('Inf')
+		for t in traj:
+			if t['min'] < minimum:
+				result = t
+				minimum = t['min']
+		return result
+
 
 if __name__ == "__main__":
 	pf = PathFinder()
-	print(pf.find_path("Gare de Le Havre", "Gare de Caen"))
+	print(pf.find_path_exp("gare de paris-est", "vosges"))

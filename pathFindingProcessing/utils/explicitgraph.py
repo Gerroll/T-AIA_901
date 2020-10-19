@@ -1,12 +1,15 @@
 from collections import defaultdict
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
-class Graph:
+class ExplicitGraph:
 	def __init__(self, matrix_graph, town):
 		self.matrix_graph = matrix_graph
 		self.town = town
 
-	def minDistance(self, dist, queue):
+	@staticmethod
+	def min_distance(dist, queue):
 		minimum = float("Inf")
 		min_index = -1
 
@@ -16,36 +19,36 @@ class Graph:
 				min_index = i
 		return min_index
 
-	def printPath(self, parent, j):
+	def print_path(self, parent, j):
 		if parent[j] == -1:
 			print(j)
 			return
-		self.printPath(parent, parent[j])
+		self.print_path(parent, parent[j])
 		print(j)
 
-	def buildPath(self, parent, j, target, previous):
+	def build_path(self, parent, j, target, previous):
 		if parent[j] == -1:
 			depart = self.town[j]
 			arrive = self.town[previous]
 			target["duration"][depart + "->" + arrive] = self.matrix_graph[previous][j]
 			target["path"].append(depart)
 			return
-		self.buildPath(parent, parent[j], target, j)
+		self.build_path(parent, parent[j], target, j)
 		depart = self.town[j]
 		if previous is not None:
 			arrive = self.town[previous]
 			target["duration"][depart + "->" + arrive] = self.matrix_graph[previous][j]
 		target["path"].append(depart)
 
-	def printSolution(self, src, dist, parent):
+	def print_solution(self, src, dist, parent):
 		print("Vertex \t\tDistance from Source\tPath")
 		for i in range(len(dist)):
 			if dist[i] == float("Inf"):
 				continue
 			print("\n%d --> %d \t\t%d \t\t\t\t\t" % (src, i, dist[i])),
-			self.printPath(parent, i)
+			self.print_path(parent, i)
 
-	def buildSolution(self, arrive, dist, parent):
+	def build_solution(self, arrive, dist, parent):
 		target = {
 			'min': dist[arrive],
 			'path': [],
@@ -53,11 +56,38 @@ class Graph:
 		}
 		if dist[arrive] == float("Inf"):
 			return target
-		self.buildPath(parent, arrive, target, None)
+		self.build_path(parent, arrive, target, None)
 		return target
 
-	def dijkstra(self, depart, arrive):
+	def draw(self):
+		h: int = len(self.matrix_graph)
+		w: int = len(self.matrix_graph[0])
 
+		# build networkx graph from matrix
+		nwxGraph: nx.Graph = nx.Graph()
+		## Add node
+		for t in self.town:
+			nwxGraph.add_node(t)
+		## Add edge
+		for j in range(h):
+			for i in range(w):
+				if self.matrix_graph[j][i] != 0:
+					nwxGraph.add_edge(self.town[i], self.town[j])
+
+		options = {
+			'node_color': 'red',
+			'node_size': 10,
+			'width': 3,
+			'with_labels': True,
+			'font_weight': 'bold',
+			'font_color': 'blue',
+		}
+		print(nwxGraph.edges)
+		nx.draw(nwxGraph, **options)
+
+		plt.show()
+
+	def dijkstra(self, depart, arrive):
 		row = len(self.matrix_graph)
 		col = len(self.matrix_graph[0])
 
@@ -77,61 +107,44 @@ class Graph:
 		# Add all vertices in queue
 		queue = list(range(row))
 		previous = -2
-		# Find shortest path for all vertices
 		while queue:
-
-			# Pick the minimum dist vertex
-			# from the set of vertices
-			# still in queue
-			u = self.minDistance(dist, queue)
+			u = ExplicitGraph.min_distance(dist, queue)
 			if u == previous:
 				break
-			# remove min element
 			if u in queue:
 				queue.remove(u)
-			# Update dist value and parent
-			# index of the adjacent vertices of
-			# the picked vertex. Consider only
-			# those vertices which are still in
-			# queue
 			for i in range(col):
-				'''Update dist[i] only if it is in queue, there is 
-				an edge from u to i, and total weight of path from 
-				src to i through u is smaller than current value of 
-				dist[i]'''
 				if self.matrix_graph[u][i] and i in queue:
 					if dist[u] + self.matrix_graph[u][i] < dist[i]:
 						dist[i] = dist[u] + self.matrix_graph[u][i]
 						parent[i] = u
 			previous = u
 
-		# print the constructed distance array
-		#self.printSolution(depart, dist, parent)
-		return self.buildSolution(arrive, dist, parent)
+		return self.build_solution(arrive, dist, parent)
 
 
 if __name__ == "__main__":
 	graph = [[0, 4, 0, 0, 0, 0, 0, 8, 0],
-		 	[4, 0, 8, 0, 0, 0, 0, 11, 0],
-		 	[0, 8, 0, 7, 0, 4, 0, 0, 2],
-		 	[0, 0, 7, 0, 9, 14, 0, 0, 0],
-		 	[0, 0, 0, 9, 0, 10, 0, 0, 0],
-		 	[0, 0, 4, 14, 10, 0, 2, 0, 0],
-		 	[0, 0, 0, 0, 0, 2, 0, 1, 6],
-		 	[8, 11, 0, 0, 0, 0, 1, 0, 7],
-		 	[0, 0, 2, 0, 0, 0, 6, 7, 0]]
+			[4, 0, 8, 0, 0, 0, 0, 11, 0],
+			[0, 8, 0, 7, 0, 4, 0, 0, 2],
+			[0, 0, 7, 0, 9, 14, 0, 0, 0],
+			[0, 0, 0, 9, 0, 10, 0, 0, 0],
+			[0, 0, 4, 14, 10, 0, 2, 0, 0],
+			[0, 0, 0, 0, 0, 2, 0, 1, 6],
+			[8, 11, 0, 0, 0, 0, 1, 0, 7],
+			[0, 0, 2, 0, 0, 0, 6, 7, 0]]
 
 	graph_non_connexe = [[0, 4, 0, 0, 0, 0, 0, 0, 0],
-			 			[4, 0, 8, 0, 0, 0, 0, 0, 0],
-			 			[0, 8, 0, 7, 0, 4, 0, 0, 2],
-			 			[0, 0, 7, 0, 9, 14, 0, 0, 0],
-			 			[0, 0, 0, 9, 0, 10, 0, 0, 0],
-			 			[0, 0, 4, 14, 10, 0, 2, 0, 0],
-			 			[0, 0, 0, 0, 0, 2, 0, 1, 6],
-			 			[0, 0, 0, 0, 0, 0, 1, 0, 7],
-			 			[0, 0, 2, 0, 0, 0, 6, 7, 0]]
+						[4, 0, 8, 0, 0, 0, 0, 0, 0],
+						[0, 8, 0, 7, 0, 4, 0, 0, 2],
+						[0, 0, 7, 0, 9, 14, 0, 0, 0],
+						[0, 0, 0, 9, 0, 10, 0, 0, 0],
+						[0, 0, 4, 14, 10, 0, 2, 0, 0],
+						[0, 0, 0, 0, 0, 2, 0, 1, 6],
+						[0, 0, 0, 0, 0, 0, 1, 0, 7],
+						[0, 0, 2, 0, 0, 0, 6, 7, 0]]
 
-	town = ["Paris", "Berlin", "Toronto", "San Francisco", "Downtown", "Berk", "Viol-le-fort", "Munich", "Tokyo"]
-	g = Graph(graph, town)
-	# Print the solution
+	town = ["Paris", "Berlin", "Toronto", "San Francisco", "Downtown", "Berk", "Montpellier", "Munich", "Tokyo"]
+	g = ExplicitGraph(graph, town)
 	print(g.dijkstra(4, 7))
+	g.draw()
