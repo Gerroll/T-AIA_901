@@ -28,7 +28,32 @@ Windows:
 `deactivate`
 
 ## Test module pathFindingProcessing
-From app.py
+Example of use:
+```
+from pathFindingProcessing import PathFinder
+
+pf = PathFinder()
+result = pf.find_path_networkx("gare de paris-est", "vosges")
+print(result)
+```
+Result expected:
+```
+{
+  'min': 227,
+  'path': [
+    'gare de paris-est',
+    'gare de chaumont',
+    'gare de culmont-chalindrey',
+    'gare de vittel'
+  ],
+  'duration': {
+    'gare de paris-est->gare de chaumont': 145,
+    'gare de chaumont->gare de culmont-chalindrey': 33,
+    'gare de culmont-chalindrey->gare de vittel': 49
+  }
+}
+```
+Example of use for some functionality from app.py
 - Display the list of authorized stations, cities or departments
 ```
 import pathFindingProcessing.utils.stationmapping as map
