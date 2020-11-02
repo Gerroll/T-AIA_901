@@ -21,7 +21,7 @@ class Nlp:
 		else:
 			self.train()
 
-	def train(self, n_iter=50):
+	def train(self, n_iter=1000):
 		"""Load the model, set up the pipeline and train the parser."""
 
 		if os.path.isdir(self.load_dir):
