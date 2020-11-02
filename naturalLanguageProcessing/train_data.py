@@ -138,6 +138,19 @@ TRAIN_DATA = [
             "heads": [1, 1, 3, 4, 1, 6, 4, 7, 6],
             "deps": ["-", "ROOT", "-", "-", "QUALITY", "-", "MOVE", "-", "END"]
         }
-
+    ),
+    (
+        "Je souhaite aller de la gare Saint-Roch à Saint-Étienne",
+        {
+            "heads": [1, 1, 1, 5, 5, 6, 2, 8, 6],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "START", "-", "END"]
+        }
+    ),
+    (
+        "Je souhaite aller de Saint-Étienne à la gare Saint-Roch",
+        {
+            "heads": [1, 1, 1, 4, 2, 7, 7, 8, 4],
+            "deps": ["-", "ROOT", "MOVE", "-", "START", "-", "-", "GARE", "END"]
+        }
     )
 ]
