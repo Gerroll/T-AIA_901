@@ -29,19 +29,31 @@ Windows:
 
 ## Test module pathFindingProcessing
 From app.py
+- Display the list of authorized stations, cities or departments
+```
+import pathFindingProcessing.utils.stationmapping as map
+
+sm = map.StationMapping()
+print(sm.get_station())
+print(sm.get_town())
+print(sm.get_department())
+```
 - Test pathfinder.py
 ```
 import pathFindingProcessing as pfp
+
 pfp.main()
 ```
 - Test networkxgraph.py
 ```
 import pathFindingProcessing.utils.networkxgraph as net
+
 net.main()
 ```
 - Test stationmapping.py
 ```
 import pathFindingProcessing.utils.stationmapping as map
+
 map.main()
 ```
 - Test stationparser.py
