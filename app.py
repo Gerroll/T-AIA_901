@@ -70,7 +70,7 @@ def main_entry():
           }
           response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_get_started)
 
-        if 'message' in webhook_data:
+        elif 'message' in webhook_data:
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
@@ -86,7 +86,7 @@ def main_entry():
 
               # Use nlp processing to get start and finish
               NLP = Nlp()
-              NLP.train()
+              # NLP.train()
 
               city_start = None
               city_finish = None
@@ -141,6 +141,8 @@ def main_entry():
               # Send the result as a list template message 
               response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload)
               # print(response.json())
+
+              break
 
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
