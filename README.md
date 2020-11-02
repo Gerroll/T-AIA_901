@@ -26,3 +26,26 @@ Windows:
 
 ### Stop using virtualenv
 `deactivate`
+
+## Test module pathFindingProcessing
+From app.py
+- Test pathfinder.py
+```
+import pathFindingProcessing as pfp
+pfp.main()
+```
+- Test networkxgraph.py
+```
+import pathFindingProcessing.utils.networkxgraph as net
+net.main()
+```
+- Test stationmapping.py
+```
+import pathFindingProcessing.utils.stationmapping as map
+map.main()
+```
+- Test stationparser.py
+```
+import pathFindingProcessing.utils.stationparser as par
+par.main()
+```

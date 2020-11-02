@@ -109,16 +109,29 @@ class StationMapping:
 
 def main():
     sm: StationMapping = StationMapping()
-    print("STATION")
+    print('########## Nombre de gare dans le fichier ressource liste-des-gares.csv ##########')
     print(len(sm.get_station()))
+    print('########## Liste exhaustive des gares ##########')
     print(sm.get_station())
-    print("TOWN")
+
+    print('########## Nombre de ville dans le fichier ressource liste-des-gares.csv ##########')
     print(len(sm.get_town()))
+    print('########## Liste exhaustive des villes ##########')
     print(sm.get_town())
-    print("DEPARTMENT")
+
+    print('########## Nombre de département dans le fichier ressource liste-des-gares.csv ##########')
     print(len(sm.get_department()))
+    print('########## Liste exhaustive des départements ##########')
     print(sm.get_department())
-    print("GET FROM UNIDENTIFIED")
+
+    print("########## Exemples de departs/arrivées acceptés par le module ##########")
+    print("Pour mulhouse:")
     print(sm.get_stations_from_unidentified('mulhouse'))
+    print("Pour MuLhOuSe:")
+    print(sm.get_stations_from_unidentified('MuLhOuSe'))
+    print("Pour mulhous:")
+    print(sm.get_stations_from_unidentified('mulhous'))
+    print("Pour haut-rhin:")
     print(sm.get_stations_from_unidentified('haut-rhin'))
+    print("Pour pizza:")
     print(sm.get_stations_from_unidentified('pizza'))

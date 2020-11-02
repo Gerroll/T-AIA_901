@@ -46,6 +46,7 @@ class NetworkxGraph:
 
 
 def main():
+    # liste des départs/arrivées avec leur distance associée
     raw_data = [['Paris', 'Berlin', 4], ['Paris', 'Munich', 8], ['Berlin', 'Toronto', 8], ['Berlin', 'Munich', 11],
                 ['Toronto', 'San Francisco', 7], ['Toronto', 'Berk', 4], ['Toronto', 'Tokyo', 2],
                 ['San Francisco', 'Downtown', 9], ['San Francisco', 'Berk', 14], ['Downtown', 'Berk', 10],
