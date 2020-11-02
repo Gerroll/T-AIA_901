@@ -1,5 +1,6 @@
 import csv
 import os
+from pathFindingProcessing.utils.util import Util
 
 
 class StationParser:
@@ -22,8 +23,15 @@ class StationParser:
             trajet: list = lr[1].split(' - ')
             if len(trajet) >= 3:
                 print("WARNING: Malformed trajet: " + lr[1])
+
+                # to lower case
                 depart: str = trajet[0].lower()
                 arrive: str = trajet[2].lower()
+
+                # remove accents
+                depart = Util.string_no_accents(depart)
+                arrive = Util.string_no_accents(arrive)
+
                 print("depart choisie: " + depart)
                 print("arrive choisie: " + arrive)
                 if depart not in self.__stations:
@@ -35,8 +43,14 @@ class StationParser:
                 format_row.append(int(lr[2]))
                 self.__data.append(format_row)
             else:
+                # to lower case
                 depart: str = trajet[0].lower()
                 arrive: str = trajet[1].lower()
+
+                # remove accents
+                depart = Util.string_no_accents(depart)
+                arrive = Util.string_no_accents(arrive)
+
                 if depart not in self.__stations:
                     self.__stations.append(depart)
                 if arrive not in self.__stations:

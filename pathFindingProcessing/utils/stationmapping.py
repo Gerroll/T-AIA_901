@@ -1,6 +1,7 @@
 import csv
 import pandas as pd
 import os
+from pathFindingProcessing.utils.util import Util
 
 # Adjust pandas console display
 pd_width = 320
@@ -28,6 +29,7 @@ class StationMapping:
         data = self.__filter_only_travellers(data)
         data = self.__remove_column(data)
         data = self.__to_lower(data)
+        data = self.__remove_accents(data)
         return data
 
     @staticmethod
@@ -53,6 +55,15 @@ class StationMapping:
         target['DEPARTMENT'] = df['DEPARTMENT'].apply(str.lower)
         return target
 
+    @staticmethod
+    def __remove_accents(df: pd.DataFrame):
+        target: pd.DataFrame = pd.DataFrame()
+
+        target['STATION'] = df['STATION'].apply(Util.string_no_accents)
+        target['TOWN'] = df['TOWN'].apply(Util.string_no_accents)
+        target['DEPARTMENT'] = df['DEPARTMENT'].apply(Util.string_no_accents)
+        return target
+
     def get_station(self):
         return self.__station
 
@@ -67,6 +78,7 @@ class StationMapping:
         target = self.__data[is_town]
         targetList = list(target['STATION'])
         completeTargetList = targetList.copy()
+
         for t in targetList:
             completeTargetList.append('gare de ' + t)
         completeTargetList.sort()
@@ -77,6 +89,7 @@ class StationMapping:
         target = self.__data[is_department]
         targetList = list(target['STATION'])
         completeTargetList = targetList.copy()
+
         for t in targetList:
             completeTargetList.append('gare de ' + t)
         completeTargetList.sort()
@@ -84,6 +97,7 @@ class StationMapping:
 
     def get_type(self, val: str):
         types = []
+
         if val in self.__station: types.append('station')
         if val in self.__town: types.append('town')
         if val in self.__department: types.append('department')
@@ -99,7 +113,7 @@ class StationMapping:
         if len(types) == 0:
             return []
         if len(types) >= 1:
-            if 'station'in types:
+            if 'station' in types:
                 return [val, 'gare de ' + val]
             if 'town' in types:
                 return self.get_stations_from_town(val)

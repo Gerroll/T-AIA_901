@@ -1,6 +1,7 @@
 from pathFindingProcessing.utils import StationParser
 from pathFindingProcessing.utils import StationMapping
 from pathFindingProcessing.utils import NetworkxGraph
+from pathFindingProcessing.utils import Util
 
 
 class PathFinder:
@@ -14,6 +15,9 @@ class PathFinder:
 	def find_path_networkx(self, depart: str, arrive: str):
 		lowDep: str = depart.lower()
 		lowArr: str = arrive.lower()
+
+		lowDep = Util.string_no_accents(lowDep)
+		lowArr = Util.string_no_accents(lowArr)
 
 		sm: StationMapping = StationMapping()
 		depart_station: list = sm.get_stations_from_unidentified(lowDep)
