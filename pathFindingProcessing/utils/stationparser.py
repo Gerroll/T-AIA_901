@@ -69,7 +69,7 @@ class StationParser:
         return graph
 
 
-if __name__ == "__main__":
+def main():
     sp = StationParser()
     print("STATION")
     print(sp.get_stations())

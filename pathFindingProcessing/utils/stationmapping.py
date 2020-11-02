@@ -107,7 +107,7 @@ class StationMapping:
                 return self.get_stations_from_department(val)
 
 
-if __name__ == "__main__":
+def main():
     sm: StationMapping = StationMapping()
     print("STATION")
     print(len(sm.get_station()))

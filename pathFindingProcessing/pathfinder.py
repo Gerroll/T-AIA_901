@@ -36,6 +36,6 @@ class PathFinder:
 		return result
 
 
-if __name__ == "__main__":
+def main():
 	pf = PathFinder()
 	print(pf.find_path_networkx("gare de paris-est", "vosges"))
