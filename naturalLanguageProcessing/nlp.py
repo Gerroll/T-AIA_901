@@ -15,7 +15,13 @@ class Nlp:
 		self.load_dir = load_dir
 		self.output_dir = output_dir
 
-	def train(self, n_iter=50):
+		if os.path.isdir(self.load_dir):
+			print("loading : " + self.load_dir)
+			self.nlp = spacy.load(self.load_dir)  # load existing spaCy model in hierarchy
+		else:
+			self.train()
+
+	def train(self, n_iter=500):
 		"""Load the model, set up the pipeline and train the parser."""
 
 		if os.path.isdir(self.load_dir):

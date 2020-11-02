@@ -1,11 +1,10 @@
 from naturalLanguageProcessing import Nlp
 from pathFindingProcessing import PathFinder
 from voiceProcessing import VoiceProcessing
+import sys
 
 def main():
-	print('Hello world !')
 	NLP = Nlp()
-	NLP.train()
 
 	# example a virer lors de l association des components
 	try:
@@ -40,7 +39,6 @@ def main():
 		print(NLP.predict("Paris est la meilleure ville"))
 	except Exception as identifier:
 		print("Bad Phrase")
-
 
 if __name__ == "__main__":
 	main()
