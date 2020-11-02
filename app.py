@@ -1,6 +1,7 @@
 from naturalLanguageProcessing import Nlp
 from pathFindingProcessing import PathFinder
 from voiceProcessing import VoiceProcessing
+import speech_recognition as sr
 import sys
 
 # Flask
@@ -20,6 +21,17 @@ ACCESS_TOKEN = "EAAwCqdXoSnYBAGvZAVkROulrJLGagS2DgeAo2SaHMlbZAvZAOflFgm1TuzR2QeW
 @app.route('/')
 def hello():
   return 'Hello World, do you like trains ?'
+
+
+""" Init chatbot, IA, and others stuff """
+@app.route('/init', methods=['GET'])
+def init_entry():
+  # Init NLP
+  NLP = Nlp()
+  NLP.reset()
+  NLP.train()
+
+  return 'Chatbot init !'
 
 """ Webhook for facebook chatbot """
 @app.route('/webhook', methods=['GET', 'POST'])
@@ -46,6 +58,10 @@ def main_entry():
   elif request.method == 'POST':
     data = request.get_json(force=True)
     ts = time.time()
+    voice_result = None
+    path_result = None
+    city_start = None
+    city_end = None
 
     # Checks this is an event from a page subscription
     if data['object'] == 'page':
@@ -84,28 +100,60 @@ def main_entry():
               open('./tmp-{0}.mp4'.format(ts), 'wb').write(audio_file.content)
 
               # Use voice processing to transform to texts
-
-              # Use nlp processing to get start and finish
-              NLP = Nlp()
-              # NLP.train()
-
-              city_start = None
-              city_finish = None
+              VP = VoiceProcessing()
               try:
-                city_start, city_finish = NLP.predict("Je veux aller de Paris jusqu'à Montpellier")
-              except Exception as identifier:
+		            # Usecase: handling from a microphone
+	              # resultFromVoice = voice_process.from_audio()
+		            # Usecase: handling from an audiofile
+	              voice_result = VP.from_file(pathfile='./tmp-{0}.mp4'.format(ts))
+              except sr.RequestError as e:
                 # Send a message asking user to send an other file audio
-                payload_error_nlp = {
+                payload_error = {
                   "recipient": {
                     "id": recipient_id
                   },
                   "message": {
-                    "text": "Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {0} et {1}, merci de recommencer avec un message audio plus précis.".format(city_start, city_finish)
+                    "text": "Problème de connexion, merci de réessayer plus tard.",
                   }
                 }
-                requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error_nlp)
+                requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error)
+              except sr.UnknownValueError as e:
+                # Send a message asking user to send an other file audio
+                payload_error = {
+                  "recipient": {
+                    "id": recipient_id
+                  },
+                  "message": {
+                    "text": "Message audio incompréhensible, merci de reformuler votre requête.",
+                  }
+                }
+                requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error)
+              else:
+                # Use nlp processing to get start and finish
+                NLP = Nlp()
+                # NLP.train()
 
-              # Use pathfinding processing to get the best path
+                try:
+                  city_start, city_finish = NLP.predict(voice_result)
+                except Exception as identifier:
+                  # Send a message asking user to send an other file audio
+                  payload_error = {
+                    "recipient": {
+                      "id": recipient_id
+                    },
+                    "message": {
+                      "text": "Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {0} et {1}, merci de recommencer avec un message audio plus précis.".format(city_start, city_finish)
+                    }
+                  }
+                  requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error)
+                else:
+                  # Use pathfinding processing to get the best path
+                  PFP = PathFinder()
+                  path_result = PFP.find_path_networkx(city_start, city_end)
+
+                  print(path_result)
+
+                  # return the response
 
               # Delete the tmp audio file
               os.remove('./tmp-{0}.mp4'.format(ts))
