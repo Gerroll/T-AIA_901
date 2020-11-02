@@ -150,49 +150,45 @@ def main_entry():
                   # Use pathfinding processing to get the best path
                   PFP = PathFinder()
                   path_result = PFP.find_path_networkx(city_start, city_end)
-
                   print(path_result)
-
-                  # return the response
-
-              # Delete the tmp audio file
-              os.remove('./tmp-{0}.mp4'.format(ts))
-
-              # Create the payload
-              payload = {
-                "recipient": {
-                  "id": recipient_id
-                }, 
-                "message": {
-                  "attachment": {
-                    "type": "template",
-                    "payload": {
-                      "template_type": "generic",
-                      "elements":[
-                        {
-                          "title":"Paris -> Lyon",
-                          "subtitle":"180 minutes",
-                        },
-                        {
-                          "title":"Lyon -> Aix-en-provence",
-                          "subtitle":"130 minutes",
-                        },
-                        {
-                          "title":"Aix-en-provence -> Montpellier",
-                          "subtitle":"80 minutes",
+                  # Create the payload
+                  payload = {
+                    "recipient": {
+                      "id": recipient_id
+                    }, 
+                    "message": {
+                      "attachment": {
+                        "type": "template",
+                        "payload": {
+                          "template_type": "generic",
+                          "elements":[
+                            {
+                              "title":"Paris -> Lyon",
+                              "subtitle":"180 minutes",
+                            },
+                            {
+                              "title":"Lyon -> Aix-en-provence",
+                              "subtitle":"130 minutes",
+                            },
+                            {
+                              "title":"Aix-en-provence -> Montpellier",
+                              "subtitle":"80 minutes",
+                            }
+                          ]
                         }
-                      ]
+                      }
                     }
                   }
-                }
-              }
 
-              # Send the result as a list template message 
-              response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload)
-              # print(response.json())
-
-              break
-
+                  # Send the result as a list template message 
+                  response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload)
+                  # print(response.json())
+                finally:
+                  pass
+              finally:
+                # Delete the tmp audio file
+                os.remove('./tmp-{0}.mp4'.format(ts))
+                
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
     else:
