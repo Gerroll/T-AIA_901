@@ -27,6 +27,25 @@ Windows:
 ### Stop using virtualenv
 `deactivate`
 
+## Using [Pipenv](https://pipenv.pypa.io/en/latest/)
+### Install pipenv
+`pip install --user pipenv`
+
+### Init project with python 3.7
+`pipenv --python path/to/python3.7`
+
+### Install dependencies from requirements.txt 
+`pipenv install -r requirements.txt`
+
+### Install package
+`pipenv install <module>`
+
+### Activate environnement
+`pipenv shell`
+
+### Run program
+`pipenv run python3 app.py`
+
 ## Test module pathFindingProcessing
 Example of use:
 ```
