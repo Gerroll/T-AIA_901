@@ -152,5 +152,12 @@ TRAIN_DATA = [
             "heads": [1, 1, 1, 4, 2, 7, 7, 8, 4],
             "deps": ["-", "ROOT", "MOVE", "-", "START", "-", "-", "GARE", "END"]
         }
+    ),
+    (
+        "Je veux aller de la gare de Lyon à la gare Montparnass",
+        {
+            "heads": [1, 1, 1, 5, 5, 6, 7, 2, 10, 10, 11, 7],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "-", "START", "-", "-", "GARE", "END"]
+        }
     )
 ]

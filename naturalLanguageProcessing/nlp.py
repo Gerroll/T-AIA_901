@@ -3,6 +3,7 @@ from __future__ import unicode_literals, print_function
 import os
 import random
 import spacy
+import shutil
 from pathlib import Path
 from spacy.util import minibatch, compounding
 
@@ -19,16 +20,10 @@ class Nlp:
 			print("loading : " + self.load_dir)
 			self.nlp = spacy.load(self.load_dir)  # load existing spaCy model in hierarchy
 		else:
-			self.train()
+			self.nlp = spacy.load(self.default_model)
 
 	def train(self, n_iter=500):
 		"""Load the model, set up the pipeline and train the parser."""
-
-		if os.path.isdir(self.load_dir):
-			print("loading : " + self.load_dir)
-			self.nlp = spacy.load(self.load_dir)  # load existing spaCy model in hierarchy
-		else:
-			self.nlp = spacy.load(self.default_model)
 
 		# We'll use the built-in dependency parser class, but we want to create a
 		# fresh instance – just in case.
@@ -96,6 +91,7 @@ class Nlp:
 	def predict(self, instruction):
 		doc = self.nlp(instruction)
 
+		gare_head = []
 		validInstruction = False
 		start = "Montpellier" # default Location (geoloc ??)
 		end = None
@@ -109,7 +105,32 @@ class Nlp:
 			if (t.dep_ == "FAIM"):
 				validInstruction = False
 				break
+			if (t.dep_ == "GARE"):
+				gare_head.append(t)
 
 		if (end == None or validInstruction == False):
 			raise Exception("Bad Phrase")
+ 
+		# add "gare " in front of start or end or both
+		prefix = ""
+		for gare in gare_head:
+			(start, end) = self.resolve_gare_name(gare, start, end , prefix)
 		return (start, end)
+
+	def resolve_gare_name(self, gare, start, end, prefix):
+		if start == gare.text:
+			start = prefix + start
+			return (start, end)
+		elif end == gare.text:
+			end = prefix + end
+			return (start, end)
+		else:
+			prefix += gare.text + " " 
+			return self.resolve_gare_name(gare.head, start, end , prefix)
+
+	def reset(self):
+		try:
+			shutil.rmtree(self.load_dir)
+		except Exception:
+			pass
+		self.nlp = spacy.load(self.default_model)
