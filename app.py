@@ -10,6 +10,7 @@ import requests
 import os
 import time
 from rq import Queue
+from worker import conn
 import redis
 
 # Flask
@@ -23,7 +24,6 @@ app = Flask(__name__)
 VERIFY_TOKEN = "EAAwCqdXoSnYBANZCKxZAZAp7Xu4bwwJ6ZCUSIEa7gHvQt55oDielASlZB6ipIwdZCsNTkysCK3eYZCZCZAnowwRXz2twu4RTo1yWvfm77cGsGu6XMlAgXtN89Nerqg5iQhUiLq54DxP4j57xOY3BqNlzchEzeP740wAP8IhROfhLyXwZDZD"
 ACCESS_TOKEN = "EAAwCqdXoSnYBAGvZAVkROulrJLGagS2DgeAo2SaHMlbZAvZAOflFgm1TuzR2QeWhmJt6OpbQZBBUq1GFNhO5YGmnpmaOdocjhj3FiTj5FZAztYZCsAUeDBk7CZCeWjCDbwzmURyFSwddN5LXnS3ux7aY9a9Ms53sZAZACvI3258tA0gZDZD"
 
-redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
 """ Just home route """
 @app.route('/')
@@ -33,7 +33,6 @@ def hello():
 """ Init chatbot, IA, and others stuff """
 @app.route('/init', methods=['GET'])
 def init_entry():
-  conn = redis.from_url(redis_url)
   # Create redis queue
   q = Queue(connection=conn)
 
