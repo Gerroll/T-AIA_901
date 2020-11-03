@@ -12,7 +12,7 @@ def main():
 	NLP = Nlp()
 	# NLP.reset()
 	# NLP.train()
-	examples(NLP)
+	# examples(NLP)
 
 	try:
 		# Usecase: handling from a microphone
