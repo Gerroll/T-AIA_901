@@ -1,1 +1,1 @@
-from .pathfinder import PathFinder
+from .pathfinder import PathFinder, main
