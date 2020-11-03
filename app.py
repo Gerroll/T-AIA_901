@@ -156,7 +156,7 @@ def main_entry():
                       "id": recipient_id
                     },
                     "message": {
-                      "text": f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis.")
+                      "text": f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis."
                     }
                   }
                   requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
