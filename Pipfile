@@ -41,6 +41,7 @@ gunicorn = "*"
 speechrecognition = "*"
 pydub = "*"
 ffmpeg = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"
