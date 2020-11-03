@@ -38,6 +38,9 @@ wrapt = "==1.12.1"
 zipp = "==3.1.0"
 flask = "*"
 gunicorn = "*"
+speechrecognition = "*"
+pydub = "*"
+ffmpeg = "*"
 
 [requires]
 python_version = "3.8"
