@@ -17,14 +17,15 @@ class Nlp:
 		self.output_dir = output_dir
 
 		if os.path.isdir(self.load_dir):
-			print("Loading : " + self.load_dir)
+			print("loading : " + self.load_dir)
 			self.nlp = spacy.load(self.load_dir)  # load existing spaCy model in hierarchy
 		else:
-			print("Loading : " + self.default_model)
+			print("loading : " + self.default_model)
 			self.nlp = spacy.load(self.default_model)
 
 	def train(self, n_iter=500):
 		"""Load the model, set up the pipeline and train the parser."""
+
 		# We'll use the built-in dependency parser class, but we want to create a
 		# fresh instance – just in case.
 		if "parser" in self.nlp.pipe_names:
@@ -49,7 +50,7 @@ class Nlp:
 				for batch in batches:
 					texts, annotations = zip(*batch)
 					self.nlp.update(texts, annotations, sgd=optimizer, losses=losses)
-				# print("Losses", losses)
+				print("Losses", losses)
 
 		# save model to output directory
 		if self.output_dir is not None:
@@ -138,7 +139,7 @@ class Nlp:
 			shutil.rmtree(self.load_dir)
 		except Exception:
 			pass
-		print("Loading : " + self.default_model)
+		print("loading : " + self.default_model)
 		self.nlp = spacy.load(self.default_model)
 
 	def isModelCreated(self):
