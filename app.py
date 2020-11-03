@@ -24,6 +24,10 @@ app = Flask(__name__)
 VERIFY_TOKEN = "EAAwCqdXoSnYBANZCKxZAZAp7Xu4bwwJ6ZCUSIEa7gHvQt55oDielASlZB6ipIwdZCsNTkysCK3eYZCZCZAnowwRXz2twu4RTo1yWvfm77cGsGu6XMlAgXtN89Nerqg5iQhUiLq54DxP4j57xOY3BqNlzchEzeP740wAP8IhROfhLyXwZDZD"
 ACCESS_TOKEN = "EAAwCqdXoSnYBAGvZAVkROulrJLGagS2DgeAo2SaHMlbZAvZAOflFgm1TuzR2QeWhmJt6OpbQZBBUq1GFNhO5YGmnpmaOdocjhj3FiTj5FZAztYZCsAUeDBk7CZCeWjCDbwzmURyFSwddN5LXnS3ux7aY9a9Ms53sZAZACvI3258tA0gZDZD"
 
+def resetNlp():
+  NLP = Nlp()
+  NLP.reset()
+  NLP.train()
 
 """ Just home route """
 @app.route('/')
@@ -36,10 +40,8 @@ def init_entry():
   # Create redis queue
   q = Queue(connection=conn)
 
-  # Init NLP
-  NLP = Nlp()
-  # NLP.reset()
-  q.enqueue(func=NLP.train(), result_ttl=0, job_timeout=3600)
+  # Queue reset nlp
+  q.enqueue(resetNlp(), result_ttl=0, job_timeout=3600)
 
   return 'Chatbot initialized !'
 
@@ -209,62 +211,53 @@ def main_entry():
 
 """ Main program """
 def main():
-    voice_process = VoiceProcessing()
-    # A remplacer avec la récupéation du model
-    NLP = Nlp()
-    NLP.train()
 
-    try:
-        # Usecase: handling from a microphone
-        # resultFromVoice = voice_process.from_audio()
+	voice_process = VoiceProcessing()
+	# A remplacer avec la récupéation du model
+	NLP = Nlp()
+	# NLP.reset()
+	# NLP.train()
+	# examples(NLP)
 
-        # Usecase: handling from an audiofile
-        resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
-    except sr.RequestError as e:
-        print("Connection problem, please try again later")
-        return 1
-    except sr.UnknownValueError as e:
-        print("Unintelligible text, please provide a new record ")
-        return 1
-    try:
-        start, end = NLP.predict(resultFromVoice)
-    except Exception as identifier:
-        print("Bad Phrase")
-    if (start):
-        print("Trajet", start, " - ", end)
+	try:
+		# Usecase: handling from a microphone
+		# resultFromVoice = voice_process.from_audio()
+
+		# Usecase: handling from an audiofile
+		resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
+		start, end = NLP.predict(resultFromVoice)
+		print("Trajet", start, " - ", end)
+	except sr.RequestError:
+		print("Connection problem, please try again later")
+		return 1
+	except sr.UnknownValueError:
+		print("Unintelligible text, please provide a new record ")
+		return 1
+	except Exception as identifier:
+		print(identifier)
+
 
 
 def examples(NLP):
-    # example a virer lors de l association des components
-    try:
-        print(NLP.predict("Je souhaiterai aller à Besancon"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux un itinéraire pour faire Montpellier - Nice"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux un itinéraire pour faire Paris - Brest"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux manger un Paris - Brest"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux manger une saucisse de Strasbourg à Brest"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("quel est le meilleur trajet pour aller de Nice à Montpellier"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("Paris est la meilleure ville"))
-    except Exception as identifier:
-        print("Bad Phrase")
+	# NLP.reset()
+	# NLP.train()
 
+	# example a virer lors de l association des components
+	list_text = [
+		"Je souhaiterai aller à Besancon",
+		"Je veux aller dans les Vosges depuis Paris",
+		"Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch",
+		"Je voudrai arriver à la gare de Lyon",
+		"Je veux arriver à Paris en partant de Lille",
+		"je voudrai un aller-retour Paris - Montpellier",
+		"je voudrai manger une glace à Montpellier",
+		"Une pizza 4 fromages Chtulhu Ftaghn"
+	]
+	for text in list_text:
+		try:
+			print(NLP.predict(text))
+		except Exception as identifier:
+			print(identifier)
 
 # if __name__ == "__main__":
 #     main()
