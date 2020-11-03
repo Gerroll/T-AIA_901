@@ -45,6 +45,7 @@ pandas = "*"
 matplotlib = "*"
 networkx = "*"
 rq = "*"
+redis = "*"
 
 [requires]
 python_version = "3.8"
