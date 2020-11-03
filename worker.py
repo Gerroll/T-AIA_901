@@ -11,5 +11,6 @@ conn = redis.from_url(redis_url)
 
 if __name__ == '__main__':
     with Connection(conn):
+        print('Worker initialisation....')
         worker = Worker(map(Queue, listen))
         worker.work()
