@@ -41,7 +41,7 @@ def init_entry():
   q = Queue(connection=conn)
 
   # Queue reset nlp
-  q.enqueue(resetNlp(), result_ttl=0, job_timeout=3600)
+  q.enqueue(resetNlp, result_ttl=0, job_timeout=3600)
 
   return 'Chatbot initialized !'
 
