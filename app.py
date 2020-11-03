@@ -10,6 +10,7 @@ def main():
     voice_process = VoiceProcessing()
     # A remplacer avec la récupéation du model
     NLP = Nlp()
+    NLP.reset()
     NLP.train()
 
     try:
@@ -18,18 +19,17 @@ def main():
 
         # Usecase: handling from an audiofile
         resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
-    except sr.RequestError as e:
+    except sr.RequestError:
         print("Connection problem, please try again later")
-        return 1;
-    except sr.UnknownValueError as e:
+        return 1
+    except sr.UnknownValueError:
         print("Unintelligible text, please provide a new record ")
-        return 1;
+        return 1
     try:
         start, end = NLP.predict(resultFromVoice)
-    except Exception as identifier:
-        print("Bad Phrase")
-    if (start):
         print("Trajet", start, " - ", end)
+    except Exception as identifier:
+        print(identifier)
 
 
 def examples(NLP):

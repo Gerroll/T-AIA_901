@@ -20,6 +20,7 @@ class Nlp:
 			print("loading : " + self.load_dir)
 			self.nlp = spacy.load(self.load_dir)  # load existing spaCy model in hierarchy
 		else:
+			print("loading : " + self.default_model)
 			self.nlp = spacy.load(self.default_model)
 
 	def train(self, n_iter=500):
@@ -138,6 +139,7 @@ class Nlp:
 			shutil.rmtree(self.load_dir)
 		except Exception:
 			pass
+		print("loading : " + self.default_model)
 		self.nlp = spacy.load(self.default_model)
 
 	def isModelCreated(self):
