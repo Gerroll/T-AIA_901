@@ -9,6 +9,8 @@ import sys
 import requests
 import os
 import time
+from rq import Queue
+from worker import conn
 
 # Flask
 from flask import Flask
@@ -30,10 +32,13 @@ def hello():
 """ Init chatbot, IA, and others stuff """
 @app.route('/init', methods=['GET'])
 def init_entry():
+  # Create redis queue
+  q = Queue(connection=conn)
+
   # Init NLP
   NLP = Nlp()
   NLP.reset()
-  NLP.train()
+  job = q.enqueue(NLP.train())
 
   return 'Chatbot init !'
 
