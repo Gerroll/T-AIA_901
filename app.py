@@ -39,7 +39,7 @@ def init_entry():
   # Init NLP
   NLP = Nlp()
   # NLP.reset()
-  job = q.enqueue(NLP.train())
+  job = queue.enqueue_in(timedelta(seconds=1), NLP.train()) # Schedule job to be run in 1 seconds
 
   return 'Chatbot init !'
 
