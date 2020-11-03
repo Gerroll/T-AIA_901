@@ -14,13 +14,6 @@ TRAIN_DATA = [
         }
     ),
     (
-        "Je veux partir à Nice depuis Montpellier",
-        {
-            "heads": [1, 1, 1, 4, 2, 6, 4],
-            "deps": ["-", "ROOT", "MOVE", "-", "END", "-", "START"]
-        }
-    ),
-    (
         "Je veux une veste de Monaco",
         {
             "heads": [1, 1, 3, 1, 5, 3],
@@ -91,20 +84,6 @@ TRAIN_DATA = [
         }
     ),
     (
-        "donne moi le trajet vers Nantes depuis Nice",
-        {
-            "heads": [0, 0, 3, 0, 5, 3, 0, 5],
-            "deps": ["ROOT", "-", "-", "MOVE", "-", "END", "-", "START"]
-        }
-    ),
-    (
-        "itinéraire à Rennes depuis Perpignan",
-        {
-            "heads": [0, 2, 4, 4, 0],
-            "deps": ["MOVE", "-", "END", "-", "START"]
-        }
-    ),
-    (
         "donne moi l'itinéraire de Strasbourg à Nice",
         {
             "heads": [0, 0, 2, 0, 5, 3, 7, 5],
@@ -158,6 +137,76 @@ TRAIN_DATA = [
         {
             "heads": [1, 1, 1, 5, 5, 6, 7, 2, 10, 10, 11, 7],
             "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "-", "START", "-", "-", "GARE", "END"]
+        }
+    ),
+    (
+        "Je souhaite arriver à la gare d'Avignon TGV",
+        {
+            "heads" : [1, 1, 1, 4, 5, 6, 7, 8, 2],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "-", "-", "END"]
+        }
+    ),
+    (
+        "Je veux aller à la gare de la Rochelle",
+        {
+            "heads" : [1, 1, 1, 4, 5, 6, 7, 8, 2],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "-", "-", "END"]
+        }
+    ),
+    (
+        "Je veux partir à Nice depuis Montpellier",
+        {
+            "heads": [1, 1, 1, 4, 2, 6, 4],
+            "deps": ["-", "ROOT", "MOVE", "-", "START", "REVERT", "END"]
+        }
+    ),
+    (
+        "donne moi le trajet vers Nantes depuis Nice",
+        {
+            "heads": [0, 0, 3, 0, 5, 3, 7, 5],
+            "deps": ["ROOT", "-", "-", "MOVE", "-", "START", "REVERT", "END"]
+        }
+    ),
+    (
+        "itinéraire à Rennes depuis Perpignan",
+        {
+            "heads": [0, 2, 0, 4, 2],
+            "deps": ["MOVE", "-", "START", "REVERT", "END"]
+        }
+    ),
+    (
+        "indique moi le trajet à Troyes en partant de Congnac",
+        {
+            "heads": [0, 0, 2, 0, 5, 3, 7, 9, 7, 5],
+            "deps": ["ROOT", "-", "-", "MOVE", "-", "START", "REVERT", "REVERT", "-", "END"]
+        }
+    ),
+    (
+        "je voudrai arriver de Caen en partant de Morlaix",
+        {
+            "heads": [1, 1, 1, 4, 2, 6, 8, 6, 4],
+            "deps": ["-", "ROOT", "MOVE", "-", "START", "REVERT", "REVERT", "-", "END"]
+        }
+    ),
+    (
+        "je veux arriver à la gare Saint-Lazare en partant de la gare de Sète",
+        {
+            "heads": [1, 1, 1, 5, 5, 6, 2, 7, 12, 7, 10, 12, 12, 6],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "START", "REVERT", "REVERT", "-", "-", "GARE", "-", "END"]
+        }
+    ),
+    (
+        "je veux aller à la gare de Toulouse",
+        {
+            "heads": [1, 1, 1, 5, 5, 7, 7, 2],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "-", "END"]
+        }
+    ),
+    (
+        "je souhaite partir à la gare de Narbonne",
+        {
+            "heads": [1, 1, 1, 5, 5, 7, 7, 2],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "-", "END"]
         }
     )
 ]

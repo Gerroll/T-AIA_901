@@ -61,22 +61,17 @@ class Nlp:
 
 	def test(self):
 		texts = [
-			"Paris Montpellier",
-			"je voudrai aller de Lyon à Brest",
-			"j'aimerai faire un trajet Rennes Strasbourg",
-			"itineraire Paris - Montpellier",
+			"Je souhaiterai aller à Besancon",
+			"Je souhaite aller de Saint-Jean-de-Védas à la gare de Saint-Roch",
+			"Je veux arriver à la gare Saint-Moret en partant de la gare de Vichy",
+			"Je veux arriver à Paris en partant de Lille",
 			"je voudrai manger une glace à Montpellier",
 			"je voudrai un aller-retour Paris - Montpellier",
 			"trajet Albi - Poitiers",
 			"Jean veut aller à Arcachon",
 			"Je veux les filles de Madrid à Paris",
 			"quel est le meilleur chemin entre Toulouse et Lille",
-			"j'envie d'aller jusqu'à Paris depuis Lyon",
-			"je veux manger une saucisse de Strasbourg à Paris",
-			"hier j'ai manger un Paris-Brest",
-			"je veux aller à Strasbourg",
-			"manger Paris-Brest",
-			"itinéraire Paris-Brest"
+			"j'ai envie d'aller jusqu'à Paris depuis Lyon",
 		]
 		docs = self.nlp.pipe(texts)
 
@@ -92,32 +87,39 @@ class Nlp:
 		doc = self.nlp(instruction)
 
 		gare_head = []
-		validInstruction = False
+		isValidInstruction = False
+		isPhraseRevert = False
 		start = "Montpellier" # default Location (geoloc ??)
 		end = None
 		for t in doc:
 			if (t.dep_ == "MOVE"):
-				validInstruction = True
+				isValidInstruction = True
 			if (t.dep_ == "START" and t.text != "-" and t.ent_type_ == "LOC"):
 				start = t.text
 			if (t.dep_ == "END" and t.text != "-" and t.ent_type_ == "LOC"):
 				end = t.text
 			if (t.dep_ == "FAIM"):
-				validInstruction = False
+				isValidInstruction = False
 				break
 			if (t.dep_ == "GARE"):
 				gare_head.append(t)
+			if (t.dep_ == "REVERT"):
+				isPhraseRevert = True
 
-		if (end == None or validInstruction == False):
+		if (end == None or isValidInstruction == False):
 			raise Exception("Bad Phrase")
  
 		# add "gare " in front of start or end or both
 		prefix = ""
 		for gare in gare_head:
-			(start, end) = self.resolve_gare_name(gare, start, end , prefix)
+			(start, end) = self.resolve_gare_name(gare, start, end , prefix, doc)
+   
+		if isPhraseRevert == True:
+			(start, end) = (end, start)
+  
 		return (start, end)
 
-	def resolve_gare_name(self, gare, start, end, prefix):
+	def resolve_gare_name(self, gare, start, end, prefix, doc):
 		if start == gare.text:
 			start = prefix + start
 			return (start, end)
@@ -125,8 +127,11 @@ class Nlp:
 			end = prefix + end
 			return (start, end)
 		else:
-			prefix += gare.text + " " 
-			return self.resolve_gare_name(gare.head, start, end , prefix)
+			prefix += gare.text + " "
+			if (len(doc) > gare.i + 1):
+				return self.resolve_gare_name(doc[gare.i + 1], start, end , prefix, doc)
+			else:
+				raise Exception("Bad Phrase")
 
 	def reset(self):
 		try:
@@ -134,3 +139,6 @@ class Nlp:
 		except Exception:
 			pass
 		self.nlp = spacy.load(self.default_model)
+
+	def isModelCreated(self):
+		return os.path.isdir(self.load_dir)

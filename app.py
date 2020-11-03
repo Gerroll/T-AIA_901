@@ -33,35 +33,25 @@ def main():
 
 
 def examples(NLP):
-    # example a virer lors de l association des components
-    try:
-        print(NLP.predict("Je souhaiterai aller à Besancon"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux un itinéraire pour faire Montpellier - Nice"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux un itinéraire pour faire Paris - Brest"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux manger un Paris - Brest"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("je veux manger une saucisse de Strasbourg à Brest"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("quel est le meilleur trajet pour aller de Nice à Montpellier"))
-    except Exception as identifier:
-        print("Bad Phrase")
-    try:
-        print(NLP.predict("Paris est la meilleure ville"))
-    except Exception as identifier:
-        print("Bad Phrase")
+	NLP = Nlp()
+
+	# NLP.reset()
+	# NLP.train()
+
+	# example a virer lors de l association des components
+	list_text = [
+		"Je souhaiterai aller à Besancon",
+		"Je souhaite aller de Saint-Jean-de-Védas à la gare de Saint-Roch",
+		"Je veux arriver à la gare Saint-Moret en partant de la gare de Vichy",
+		"Je veux arriver à Paris en partant de Lille",
+		"je voudrai un aller-retour Paris - Montpellier",
+		"je voudrai manger une glace à Montpellier",
+	]
+	for text in list_text:
+		try:
+			print(NLP.predict(text))
+		except Exception as identifier:
+			print(identifier)
 
 
 if __name__ == "__main__":
