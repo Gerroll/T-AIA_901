@@ -32,6 +32,7 @@ def hello():
 """ Init chatbot, IA, and others stuff """
 @app.route('/init', methods=['GET'])
 def init_entry():
+  print(conn)
   # Create redis queue
   q = Queue(connection=conn)
 
