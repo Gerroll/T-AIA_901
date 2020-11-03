@@ -42,6 +42,8 @@ speechrecognition = "*"
 pydub = "*"
 ffmpeg = "*"
 pandas = "*"
+matplotlib = "*"
+networkx = "*"
 
 [requires]
 python_version = "3.8"
