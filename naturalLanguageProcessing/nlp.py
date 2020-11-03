@@ -25,7 +25,6 @@ class Nlp:
 
 	def train(self, n_iter=500):
 		"""Load the model, set up the pipeline and train the parser."""
-    print('Start training the model...')
 		# We'll use the built-in dependency parser class, but we want to create a
 		# fresh instance – just in case.
 		if "parser" in self.nlp.pipe_names:
@@ -59,7 +58,6 @@ class Nlp:
 				self.output_dir_Path.mkdir()
 			self.nlp.to_disk(self.output_dir_Path)
 			print("Saved model to", self.output_dir_Path)
-      print("Training is done.")
 
 	def test(self):
 		texts = [
@@ -136,7 +134,6 @@ class Nlp:
 				raise Exception("Bad Phrase")
 
 	def reset(self):
-    print('Removing saved model & cleaning NLP.')
 		try:
 			shutil.rmtree(self.load_dir)
 		except Exception:
