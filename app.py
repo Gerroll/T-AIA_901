@@ -109,7 +109,9 @@ def main_entry():
               print('audio')
               # download audio and store it in temporary file
               audio_file = requests.get(url)
-              open('./tmp-{0}.mp4'.format(ts), 'wb').write(audio_file.content)
+              pathfile = './tmp-{0}.mp4'.format(ts)
+              print('file path {0}'.format(pathfile))
+              open(, 'wb').write(audio_file.content)
 
               # Use voice processing to transform to texts
               VP = VoiceProcessing()
@@ -117,7 +119,7 @@ def main_entry():
 		            # Usecase: handling from a microphone
 	              # resultFromVoice = voice_process.from_audio()
 		            # Usecase: handling from an audiofile
-	              voice_result = VP.from_file(pathfile='./tmp-{0}.mp4'.format(ts))
+	              voice_result = VP.from_file(pathfile=pathfile)
               except sr.RequestError as e:
                 # Send a message asking user to send an other file audio
                 payload_error = {
@@ -199,7 +201,7 @@ def main_entry():
                   pass
               finally:
                 # Delete the tmp audio file
-                os.remove('./tmp-{0}.mp4'.format(ts))
+                os.remove(pathfile)
                 
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
