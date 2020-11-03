@@ -97,7 +97,7 @@ def main_entry():
               "text": "Bienvenue sur ce magnifique chatbot !\nIl permet de trouver les trains les plus rapides entre 2 villes.\nAttention, il ne comprend que les messages audios.\nPour commencer à l'utiliser, envoyez un message, comme par exemple : 'Je veux aller de Paris jusqu'à Montpellier.'"
             }
           }
-          response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_get_started)
+          response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_get_started)
 
         elif 'message' in webhook_data:
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
@@ -109,9 +109,9 @@ def main_entry():
               print('audio')
               # download audio and store it in temporary file
               audio_file = requests.get(url)
-              pathfile = './tmp-{0}.mp4'.format(ts)
-              print('file path {0}'.format(pathfile))
-              open(, 'wb').write(audio_file.content)
+              pathfile = f'./tmp-{ts}.mp4'
+              print(f'file path {pathfile}')
+              open(pathfile, 'wb').write(audio_file.content)
 
               # Use voice processing to transform to texts
               VP = VoiceProcessing()
@@ -130,7 +130,7 @@ def main_entry():
                     "text": "Problème de connexion, merci de réessayer plus tard.",
                   }
                 }
-                requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error)
+                requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
               except sr.UnknownValueError as e:
                 # Send a message asking user to send an other file audio
                 payload_error = {
@@ -141,7 +141,7 @@ def main_entry():
                     "text": "Message audio incompréhensible, merci de reformuler votre requête.",
                   }
                 }
-                requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error)
+                requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
               else:
                 # Use nlp processing to get start and finish
                 NLP = Nlp()
@@ -156,10 +156,10 @@ def main_entry():
                       "id": recipient_id
                     },
                     "message": {
-                      "text": "Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {0} et {1}, merci de recommencer avec un message audio plus précis.".format(city_start, city_finish)
+                      "text": f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis.")
                     }
                   }
-                  requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload_error)
+                  requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
                 else:
                   # Use pathfinding processing to get the best path
                   PFP = PathFinder()
@@ -195,7 +195,7 @@ def main_entry():
                   }
 
                   # Send the result as a list template message 
-                  response = requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={0}'.format(ACCESS_TOKEN), json=payload)
+                  response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload)
                   # print(response.json())
                 finally:
                   pass
