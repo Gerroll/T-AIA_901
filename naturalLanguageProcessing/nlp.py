@@ -3,6 +3,7 @@ from __future__ import unicode_literals, print_function
 import os
 import random
 import spacy
+import shutil
 from pathlib import Path
 from spacy.util import minibatch, compounding
 
@@ -19,16 +20,11 @@ class Nlp:
 			print("loading : " + self.load_dir)
 			self.nlp = spacy.load(self.load_dir)  # load existing spaCy model in hierarchy
 		else:
-			self.train()
+			print("loading : " + self.default_model)
+			self.nlp = spacy.load(self.default_model)
 
 	def train(self, n_iter=500):
 		"""Load the model, set up the pipeline and train the parser."""
-
-		if os.path.isdir(self.load_dir):
-			print("loading : " + self.load_dir)
-			self.nlp = spacy.load(self.load_dir)  # load existing spaCy model in hierarchy
-		else:
-			self.nlp = spacy.load(self.default_model)
 
 		# We'll use the built-in dependency parser class, but we want to create a
 		# fresh instance – just in case.
@@ -66,22 +62,17 @@ class Nlp:
 
 	def test(self):
 		texts = [
-			"Paris Montpellier",
-			"je voudrai aller de Lyon à Brest",
-			"j'aimerai faire un trajet Rennes Strasbourg",
-			"itineraire Paris - Montpellier",
+			"Je souhaiterai aller à Besancon",
+			"Je souhaite aller de Saint-Jean-de-Védas à la gare de Saint-Roch",
+			"Je veux arriver à la gare Saint-Moret en partant de la gare de Vichy",
+			"Je veux arriver à Paris en partant de Lille",
 			"je voudrai manger une glace à Montpellier",
 			"je voudrai un aller-retour Paris - Montpellier",
 			"trajet Albi - Poitiers",
 			"Jean veut aller à Arcachon",
 			"Je veux les filles de Madrid à Paris",
 			"quel est le meilleur chemin entre Toulouse et Lille",
-			"j'envie d'aller jusqu'à Paris depuis Lyon",
-			"je veux manger une saucisse de Strasbourg à Paris",
-			"hier j'ai manger un Paris-Brest",
-			"je veux aller à Strasbourg",
-			"manger Paris-Brest",
-			"itinéraire Paris-Brest"
+			"j'ai envie d'aller jusqu'à Paris depuis Lyon",
 		]
 		docs = self.nlp.pipe(texts)
 
@@ -96,20 +87,60 @@ class Nlp:
 	def predict(self, instruction):
 		doc = self.nlp(instruction)
 
-		validInstruction = False
+		gare_head = []
+		isValidInstruction = False
+		isPhraseRevert = False
 		start = "Montpellier" # default Location (geoloc ??)
 		end = None
 		for t in doc:
 			if (t.dep_ == "MOVE"):
-				validInstruction = True
+				isValidInstruction = True
 			if (t.dep_ == "START" and t.text != "-" and t.ent_type_ == "LOC"):
 				start = t.text
 			if (t.dep_ == "END" and t.text != "-" and t.ent_type_ == "LOC"):
 				end = t.text
 			if (t.dep_ == "FAIM"):
-				validInstruction = False
+				isValidInstruction = False
 				break
+			if (t.dep_ == "GARE"):
+				gare_head.append(t)
+			if (t.dep_ == "REVERT"):
+				isPhraseRevert = True
 
-		if (end == None or validInstruction == False):
+		if (end == None or isValidInstruction == False):
 			raise Exception("Bad Phrase")
+ 
+		# add "gare " in front of start or end or both
+		prefix = ""
+		for gare in gare_head:
+			(start, end) = self.resolve_gare_name(gare, start, end , prefix, doc)
+   
+		if isPhraseRevert == True:
+			(start, end) = (end, start)
+  
 		return (start, end)
+
+	def resolve_gare_name(self, gare, start, end, prefix, doc):
+		if start == gare.text:
+			start = prefix + start
+			return (start, end)
+		elif end == gare.text:
+			end = prefix + end
+			return (start, end)
+		else:
+			prefix += gare.text + " "
+			if (len(doc) > gare.i + 1):
+				return self.resolve_gare_name(doc[gare.i + 1], start, end , prefix, doc)
+			else:
+				raise Exception("Bad Phrase")
+
+	def reset(self):
+		try:
+			shutil.rmtree(self.load_dir)
+		except Exception:
+			pass
+		print("loading : " + self.default_model)
+		self.nlp = spacy.load(self.default_model)
+
+	def isModelCreated(self):
+		return os.path.isdir(self.load_dir)
