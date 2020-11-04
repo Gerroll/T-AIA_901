@@ -92,8 +92,8 @@ def main_entry():
         recipient_id = webhook_data['sender']['id']
         print(webhook_data)
         print(recipient_id)
-        print(f'flo ? {conn.get('flow')}')
-        print(f'audio received ? {conn.get('audio_received')}')
+        print('flo ? {}'.format(conn.get('flow')))
+        print('audio received ? {}'.format(conn.get('audio_received')))
 
         # Get started
         if 'postback' in webhook_data and webhook_data['postback']['payload'] == 'GET_STARTED':
