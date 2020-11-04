@@ -85,8 +85,9 @@ class Nlp:
 			print("")
 
 	def predict(self, instruction):
+		print(f'instruction : {instruction}')
 		doc = self.nlp(instruction)
-
+		print(f'doc : {doc}')
 		gare_head = []
 		isValidInstruction = False
 		isPhraseRevert = False
@@ -106,18 +107,19 @@ class Nlp:
 				gare_head.append(t)
 			if (t.dep_ == "REVERT"):
 				isPhraseRevert = True
-
+		print(f'valid ? {isValidInstruction}')
+		print(f'end ? {end}')
 		if (end == None or isValidInstruction == False):
 			raise Exception("Bad Phrase")
- 
+
 		# add "gare " in front of start or end or both
 		prefix = ""
 		for gare in gare_head:
 			(start, end) = self.resolve_gare_name(gare, start, end , prefix, doc)
-   
+
 		if isPhraseRevert == True:
 			(start, end) = (end, start)
-  
+
 		return (start, end)
 
 	def resolve_gare_name(self, gare, start, end, prefix, doc):
