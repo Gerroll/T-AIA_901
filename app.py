@@ -145,7 +145,6 @@ def main_entry():
               else:
                 # Use nlp processing to get start and finish
                 NLP = Nlp()
-                # NLP.train()
 
                 try:
                   city_start, city_finish = NLP.predict(voice_result)
