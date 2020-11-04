@@ -85,9 +85,8 @@ class Nlp:
 			print("")
 
 	def predict(self, instruction):
-		print(f'instruction : {instruction}')
 		doc = self.nlp(instruction)
-		print(f'doc : {doc}')
+
 		gare_head = []
 		isValidInstruction = False
 		isPhraseRevert = False
@@ -107,8 +106,7 @@ class Nlp:
 				gare_head.append(t)
 			if (t.dep_ == "REVERT"):
 				isPhraseRevert = True
-		print(f'valid ? {isValidInstruction}')
-		print(f'end ? {end}')
+
 		if (end == None or isValidInstruction == False):
 			raise Exception("Bad Phrase")
 

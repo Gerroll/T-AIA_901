@@ -160,11 +160,8 @@ def main_entry():
                 # Use nlp processing to get start and finish
                 NLP = Nlp()
 
-                # test if model is created
-                print(f'Model created ? {NLP.isModelCreated()}')
                 try:
-                  print(f'Voice result : {voice_result}')
-                  (city_start, city_finish) = NLP.predict(voice_result)
+                  (city_start, city_end) = NLP.predict(voice_result)
                   print(f'cities : {city_start} / {city_end}')
                 except Exception as identifier:
                   # Send a message asking user to send an other file audio
