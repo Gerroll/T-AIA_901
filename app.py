@@ -73,6 +73,7 @@ def main_entry():
   elif request.method == 'POST':
     # Set redis user flow variable
     conn.set('flow', 0)
+    conn.set('audio_received', False)
 
     data = request.get_json(force=True)
     ts = time.time()
@@ -80,9 +81,6 @@ def main_entry():
     path_result = None
     city_start = None
     city_end = None
-
-    # Set redis user flow variable - Message sended to the chatbot
-    conn.set('flow', 1)
 
     # Checks this is an event from a page subscription
     if data['object'] == 'page':
@@ -110,12 +108,13 @@ def main_entry():
           }
           response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_get_started)
 
-        elif 'message' in webhook_data and 'is_echo' not in webhook_data: # is_echo means its sended by the page itself
+        elif 'message' in webhook_data and 'is_echo' not in webhook_data and conn.get('audio_received') is False and conn.get('flow') == 0: # is_echo means its sended by the page itself
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
             
             if attachment['type'] == 'audio':
+              conn.set('audio_received', True)
               # Set redis user flow variable
               conn.set('flow', 1)
               url = attachment_payload['url']
@@ -132,6 +131,8 @@ def main_entry():
 		            # Usecase: handling from an audiofile
 	              voice_result = VP.from_file(pathfile=pathfile)
               except sr.RequestError as e:
+                conn.set('flow', 0)
+                conn.set('audio_received', False)
                 # Send a message asking user to send an other file audio
                 payload_error = {
                   "recipient": {
@@ -143,6 +144,8 @@ def main_entry():
                 }
                 requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
               except sr.UnknownValueError as e:
+                conn.set('flow', 0)
+                conn.set('audio_received', False)
                 # Send a message asking user to send an other file audio
                 payload_error = {
                   "recipient": {
@@ -163,6 +166,8 @@ def main_entry():
                   (city_start, city_end) = NLP.predict(voice_result)
                   print(f'cities : {city_start} / {city_end}')
                 except Exception as identifier:
+                  conn.set('flow', 0)
+                  conn.set('audio_received', False)
                   # Send a message asking user to send an other file audio
                   payload_error = {
                     "recipient": {
@@ -182,6 +187,8 @@ def main_entry():
                     path_result = PFP.find_path_networkx(city_start, city_end)
                     print(path_result)
                   except Exception as e:
+                    conn.set('flow', 0)
+                    conn.set('audio_received', False)
                     print(e)
                   else:
                     # Create the payload for the path response
@@ -226,6 +233,7 @@ def main_entry():
                 city_start = None
                 city_end = None
                 conn.set('flow', 0)
+                conn.set('audio_received', False)
                 # Delete the tmp audio file
                 os.remove(pathfile)
                 
