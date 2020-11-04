@@ -28,7 +28,6 @@ def resetNlp():
   NLP = Nlp()
   NLP.reset()
   NLP.train()
-  NLP.test()
 
 """ Just home route """
 @app.route('/')
@@ -161,6 +160,7 @@ def main_entry():
                 NLP = Nlp()
 
                 try:
+                  print(f'Voice result : {voice_result}')
                   city_start, city_finish = NLP.predict(voice_result)
                   print(f'cities : {city_start} / {city_end}')
                 except Exception as identifier:
