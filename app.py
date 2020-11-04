@@ -99,18 +99,16 @@ def main_entry():
           }
           response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_get_started)
 
-        elif 'message' in webhook_data:
+        elif 'message' in webhook_data and 'is_echo' not in webhook_data:
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
             
             if attachment['type'] == 'audio':
               url = attachment_payload['url']
-              print('audio')
               # download audio and store it in temporary file
               audio_file = requests.get(url)
               pathfile = f'./tmp-{ts}.mp4'
-              print(f'file path {pathfile}')
               open(pathfile, 'wb').write(audio_file.content)
 
               # Use voice processing to transform to texts
@@ -148,6 +146,7 @@ def main_entry():
 
                 try:
                   city_start, city_finish = NLP.predict(voice_result)
+                  print(f'cities : {city_start} / {city_end}')
                 except Exception as identifier:
                   # Send a message asking user to send an other file audio
                   payload_error = {
