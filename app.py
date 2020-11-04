@@ -159,6 +159,8 @@ def main_entry():
                 # Use nlp processing to get start and finish
                 NLP = Nlp()
 
+                # test if model is created
+                print(f'Model created ? {NLP.isModelCreated()}')
                 try:
                   print(f'Voice result : {voice_result}')
                   (city_start, city_finish) = NLP.predict(voice_result)
