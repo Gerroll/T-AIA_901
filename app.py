@@ -110,7 +110,7 @@ def main_entry():
           }
           response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_get_started)
 
-        elif conn.get('user') == recipend_id and 'message' in webhook_data and 'is_echo' not in webhook_data:
+        elif conn.get('user') == recipient_id and 'message' in webhook_data and 'is_echo' not in webhook_data:
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
