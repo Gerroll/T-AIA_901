@@ -184,7 +184,7 @@ def main_entry():
                     print(path_result)
                   except Exception as e:
                     print(e)
-                  else
+                  else:
                     # Create the payload for the path response
                     payload = {
                       "recipient": {
