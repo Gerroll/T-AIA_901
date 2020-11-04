@@ -179,40 +179,46 @@ def main_entry():
                   conn.set('flow', 3)
                   # Use pathfinding processing to get the best path
                   PFP = PathFinder()
-                  path_result = PFP.find_path_networkx(city_start, city_end)
-                  print(path_result)
-                  # Create the payload
-                  payload = {
-                    "recipient": {
-                      "id": recipient_id
-                    }, 
-                    "message": {
-                      "attachment": {
-                        "type": "template",
-                        "payload": {
-                          "template_type": "generic",
-                          "elements":[
-                            {
-                              "title":"Paris -> Lyon",
-                              "subtitle":"180 minutes",
-                            },
-                            {
-                              "title":"Lyon -> Aix-en-provence",
-                              "subtitle":"130 minutes",
-                            },
-                            {
-                              "title":"Aix-en-provence -> Montpellier",
-                              "subtitle":"80 minutes",
-                            }
-                          ]
+                  try:
+                    path_result = PFP.find_path_networkx(city_start, city_end)
+                    print(path_result)
+                  except Exception as e:
+                    print(e)
+                  else
+                    # Create the payload for the path response
+                    payload = {
+                      "recipient": {
+                        "id": recipient_id
+                      }, 
+                      "message": {
+                        "attachment": {
+                          "type": "template",
+                          "payload": {
+                            "template_type": "generic",
+                            "elements":[
+                              {
+                                "title":"Paris -> Lyon",
+                                "subtitle":"180 minutes",
+                              },
+                              {
+                                "title":"Lyon -> Aix-en-provence",
+                                "subtitle":"130 minutes",
+                              },
+                              {
+                                "title":"Aix-en-provence -> Montpellier",
+                                "subtitle":"80 minutes",
+                              }
+                            ]
+                          }
                         }
                       }
                     }
-                  }
 
-                  # Send the result as a list template message 
-                  response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload)
-                  # print(response.json())
+                    # Send the result as a list template message 
+                    response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload)
+                    # print(response.json())
+                  finally:
+                    pass
                 finally:
                   pass
               finally:
