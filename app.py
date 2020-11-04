@@ -161,7 +161,7 @@ def main_entry():
 
                 try:
                   print(f'Voice result : {voice_result}')
-                  city_start, city_finish = NLP.predict(voice_result)
+                  (city_start, city_finish) = NLP.predict(voice_result)
                   print(f'cities : {city_start} / {city_end}')
                 except Exception as identifier:
                   # Send a message asking user to send an other file audio
