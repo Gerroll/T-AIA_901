@@ -73,7 +73,7 @@ def main_entry():
   elif request.method == 'POST':
     # Set redis user flow variable
     conn.set('flow', 0)
-    conn.set('audio_received', False)
+    conn.set('audio_received', 'false')
 
     data = request.get_json(force=True)
     ts = time.time()
@@ -108,13 +108,13 @@ def main_entry():
           }
           response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_get_started)
 
-        elif 'message' in webhook_data and 'is_echo' not in webhook_data and conn.get('audio_received') is False and conn.get('flow') == 0: # is_echo means its sended by the page itself
+        elif 'message' in webhook_data and 'is_echo' not in webhook_data and conn.get('audio_received') == 'false' and conn.get('flow') == 0: # is_echo means its sended by the page itself
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
             
             if attachment['type'] == 'audio':
-              conn.set('audio_received', True)
+              conn.set('audio_received', 'true')
               # Set redis user flow variable
               conn.set('flow', 1)
               url = attachment_payload['url']
@@ -132,7 +132,7 @@ def main_entry():
 	              voice_result = VP.from_file(pathfile=pathfile)
               except sr.RequestError as e:
                 conn.set('flow', 0)
-                conn.set('audio_received', False)
+                conn.set('audio_received', 'false')
                 # Send a message asking user to send an other file audio
                 payload_error = {
                   "recipient": {
@@ -145,7 +145,7 @@ def main_entry():
                 requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
               except sr.UnknownValueError as e:
                 conn.set('flow', 0)
-                conn.set('audio_received', False)
+                conn.set('audio_received', 'false')
                 # Send a message asking user to send an other file audio
                 payload_error = {
                   "recipient": {
@@ -167,7 +167,7 @@ def main_entry():
                   print(f'cities : {city_start} / {city_end}')
                 except Exception as identifier:
                   conn.set('flow', 0)
-                  conn.set('audio_received', False)
+                  conn.set('audio_received', 'false')
                   # Send a message asking user to send an other file audio
                   payload_error = {
                     "recipient": {
@@ -188,7 +188,7 @@ def main_entry():
                     print(path_result)
                   except Exception as e:
                     conn.set('flow', 0)
-                    conn.set('audio_received', False)
+                    conn.set('audio_received', 'false')
                     print(e)
                   else:
                     # Create the payload for the path response
@@ -233,7 +233,7 @@ def main_entry():
                 city_start = None
                 city_end = None
                 conn.set('flow', 0)
-                conn.set('audio_received', False)
+                conn.set('audio_received', 'false')
                 # Delete the tmp audio file
                 os.remove(pathfile)
                 
