@@ -95,7 +95,6 @@ def main_entry():
         print(webhook_data)
         print(recipient_id)
 
-        
         # Get started
         if 'postback' in webhook_data and webhook_data['postback']['payload'] == 'GET_STARTED':
           # Set redis user
@@ -222,6 +221,11 @@ def main_entry():
                 finally:
                   pass
               finally:
+                voice_result = None
+                path_result = None
+                city_start = None
+                city_end = None
+                conn.set('flow', 0)
                 # Delete the tmp audio file
                 os.remove(pathfile)
                 
