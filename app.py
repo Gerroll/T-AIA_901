@@ -48,6 +48,8 @@ def init_entry():
 """ Webhook for facebook chatbot """
 @app.route('/webhook', methods=['GET', 'POST'])
 def main_entry():
+  
+
   # Verify token webhook to discuss with the chatbot
   if request.method == 'GET': 
     # Parse the query params
@@ -68,12 +70,18 @@ def main_entry():
 
   # We can talk to the chatbot
   elif request.method == 'POST':
+    # Set redis user flow variable
+    conn.set('flow', 0)
+
     data = request.get_json(force=True)
     ts = time.time()
     voice_result = None
     path_result = None
     city_start = None
     city_end = None
+
+    # Set redis user flow variable - Message sended to the chatbot
+    conn.set('flow', 1)
 
     # Checks this is an event from a page subscription
     if data['object'] == 'page':
@@ -86,8 +94,11 @@ def main_entry():
         print(webhook_data)
         print(recipient_id)
 
+        
         # Get started
         if 'postback' in webhook_data and webhook_data['postback']['payload'] == 'GET_STARTED':
+          # Set redis user
+          conn.set('user', recipient_id)
           # Send a text messagee explaining the chatbot
           payload_get_started = {
             "recipient": {
@@ -99,12 +110,14 @@ def main_entry():
           }
           response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_get_started)
 
-        elif 'message' in webhook_data and 'is_echo' not in webhook_data:
+        elif conn.get('user') == recipend_id and 'message' in webhook_data and 'is_echo' not in webhook_data:
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
             
             if attachment['type'] == 'audio':
+              # Set redis user flow variable
+              conn.set('flow', 1)
               url = attachment_payload['url']
               # download audio and store it in temporary file
               audio_file = requests.get(url)
@@ -141,6 +154,8 @@ def main_entry():
                 }
                 requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
               else:
+                # Set redis user flow variable
+                conn.set('flow', 2)
                 # Use nlp processing to get start and finish
                 NLP = Nlp()
 
@@ -159,6 +174,8 @@ def main_entry():
                   }
                   requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
                 else:
+                  # Set redis user flow variable
+                  conn.set('flow', 3)
                   # Use pathfinding processing to get the best path
                   PFP = PathFinder()
                   path_result = PFP.find_path_networkx(city_start, city_end)
