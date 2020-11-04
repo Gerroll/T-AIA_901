@@ -279,5 +279,5 @@ def examples(NLP):
 		except Exception as identifier:
 			print(identifier)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    resetNlp()
