@@ -28,6 +28,7 @@ def resetNlp():
   NLP = Nlp()
   NLP.reset()
   NLP.train()
+  NLP.test()
 
 """ Just home route """
 @app.route('/')
