@@ -90,10 +90,8 @@ def main_entry():
         # Gets the message. entry.messaging is an array, but will only ever contain one message, so we get index 0
         webhook_data = entry['messaging'][0]
         recipient_id = webhook_data['sender']['id']
-        print(webhook_data)
-        print(recipient_id)
-        print('flo ? {}'.format(conn.get('flow')))
-        print('audio received ? {}'.format(conn.get('audio_received')))
+        # print(webhook_data)
+        # print(recipient_id)
 
         # Get started
         if 'postback' in webhook_data and webhook_data['postback']['payload'] == 'GET_STARTED':
@@ -109,13 +107,13 @@ def main_entry():
             }
           }
           response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_get_started)
-
-        elif 'message' in webhook_data and 'is_echo' not in webhook_data and conn.get('audio_received') == 'false' and conn.get('flow') == 0: # is_echo means its sended by the page itself
+        elif 'message' in webhook_data and 'is_echo' not in webhook_data and conn.get('audio_received') == b'false' and int(conn.get('flow')) == 0: # is_echo means its sended by the page itself
           if 'is_echo' not in webhook_data['message'] and 'attachments' in webhook_data['message']:
             attachment = webhook_data['message']['attachments'][0]
             attachment_payload = attachment['payload']
             
             if attachment['type'] == 'audio':
+              print('Received audio from client on chatbot')
               conn.set('audio_received', 'true')
               # Set redis user flow variable
               conn.set('flow', 1)
@@ -126,13 +124,51 @@ def main_entry():
               open(pathfile, 'wb').write(audio_file.content)
 
               # Use voice processing to transform to texts
-              VP = VoiceProcessing()
+              # VP = VoiceProcessing()
+              # try:
+              #   # Usecase: handling from a microphone
+              #   # resultFromVoice = voice_process.from_audio()
+              #   # Usecase: handling from an audiofile
+              #   voice_result = VP.from_file(pathfile=pathfile)
+              #   print(voice_result)
+              # except sr.RequestError as e:
+              #   conn.set('flow', 0)
+              #   conn.set('audio_received', 'false')
+              #   # Send a message asking user to send an other file audio
+              #   payload_error = {
+              #     "recipient": {
+              #       "id": recipient_id
+              #     },
+              #     "message": {
+              #       "text": "Problème de connexion, merci de réessayer plus tard.",
+              #     }
+              #   }
+              #   requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
+              # except sr.UnknownValueError as e:
+              #   conn.set('flow', 0)
+              #   conn.set('audio_received', 'false')
+              #   # Send a message asking user to send an other file audio
+              #   payload_error = {
+              #     "recipient": {
+              #       "id": recipient_id
+              #     },
+              #     "message": {
+              #       "text": "Message audio incompréhensible, merci de reformuler votre requête.",
+              #     }
+              #   }
+              #   requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
+              # else:
+              # Set redis user flow variable
+              conn.set('flow', 2)
+
               try:
-		            # Usecase: handling from a microphone
-	              # resultFromVoice = voice_process.from_audio()
-		            # Usecase: handling from an audiofile
-	              voice_result = VP.from_file(pathfile=pathfile)
-              except sr.RequestError as e:
+                # Use nlp processing to get start and finish
+                NLP = Nlp()
+                # (city_start, city_end) = NLP.predict(voice_result)
+                (city_start, city_end) = NLP.predict("Je veux arriver à la gare de lyon en partant de la gare saint roch")
+                print(f'city start: {city_start}')
+                print(f'city end: {city_end}')
+              except Exception as identifier:
                 conn.set('flow', 0)
                 conn.set('audio_received', 'false')
                 # Send a message asking user to send an other file audio
@@ -141,95 +177,60 @@ def main_entry():
                     "id": recipient_id
                   },
                   "message": {
-                    "text": "Problème de connexion, merci de réessayer plus tard.",
-                  }
-                }
-                requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
-              except sr.UnknownValueError as e:
-                conn.set('flow', 0)
-                conn.set('audio_received', 'false')
-                # Send a message asking user to send an other file audio
-                payload_error = {
-                  "recipient": {
-                    "id": recipient_id
-                  },
-                  "message": {
-                    "text": "Message audio incompréhensible, merci de reformuler votre requête.",
+                    "text": f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis."
                   }
                 }
                 requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
               else:
                 # Set redis user flow variable
-                conn.set('flow', 2)
-                # Use nlp processing to get start and finish
-                NLP = Nlp()
-
+                conn.set('flow', 3)
                 try:
-                  (city_start, city_end) = NLP.predict(voice_result)
-                  print(f'cities : {city_start} / {city_end}')
-                except Exception as identifier:
-                  conn.set('flow', 0)
-                  conn.set('audio_received', 'false')
-                  # Send a message asking user to send an other file audio
-                  payload_error = {
-                    "recipient": {
-                      "id": recipient_id
-                    },
-                    "message": {
-                      "text": f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis."
-                    }
-                  }
-                  requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
-                else:
-                  # Set redis user flow variable
-                  conn.set('flow', 3)
                   # Use pathfinding processing to get the best path
                   PFP = PathFinder()
-                  try:
-                    path_result = PFP.find_path_networkx(city_start, city_end)
-                    print(path_result)
-                  except Exception as e:
-                    conn.set('flow', 0)
-                    conn.set('audio_received', 'false')
-                    print(e)
-                  else:
-                    # Create the payload for the path response
-                    payload = {
-                      "recipient": {
-                        "id": recipient_id
-                      }, 
-                      "message": {
-                        "attachment": {
-                          "type": "template",
-                          "payload": {
-                            "template_type": "generic",
-                            "elements":[
-                              {
-                                "title":"Paris -> Lyon",
-                                "subtitle":"180 minutes",
-                              },
-                              {
-                                "title":"Lyon -> Aix-en-provence",
-                                "subtitle":"130 minutes",
-                              },
-                              {
-                                "title":"Aix-en-provence -> Montpellier",
-                                "subtitle":"80 minutes",
-                              }
-                            ]
-                          }
+                  path_result = PFP.find_path_networkx(city_start, city_end)
+                  print('Path result : {}'.format(path_result))
+                except Exception as e:
+                  conn.set('flow', 0)
+                  conn.set('audio_received', 'false')
+                  print(e)
+                else:
+                  # Create the payload for the path response
+                  payload = {
+                    "recipient": {
+                      "id": recipient_id
+                    }, 
+                    "message": {
+                      "attachment": {
+                        "type": "template",
+                        "payload": {
+                          "template_type": "generic",
+                          "elements":[
+                            {
+                              "title":"Paris -> Lyon",
+                              "subtitle":"180 minutes",
+                            },
+                            {
+                              "title":"Lyon -> Aix-en-provence",
+                              "subtitle":"130 minutes",
+                            },
+                            {
+                              "title":"Aix-en-provence -> Montpellier",
+                              "subtitle":"80 minutes",
+                            }
+                          ]
                         }
                       }
                     }
+                  }
 
-                    # Send the result as a list template message 
-                    response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload)
-                    # print(response.json())
-                  finally:
-                    pass
+                  # Send the result as a list template message 
+                  response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload)
+                  # print(response.json())
                 finally:
                   pass
               finally:
+                # pass
+                # finally:
                 voice_result = None
                 path_result = None
                 city_start = None
@@ -238,7 +239,7 @@ def main_entry():
                 conn.set('audio_received', 'false')
                 # Delete the tmp audio file
                 os.remove(pathfile)
-                
+
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
     else:
