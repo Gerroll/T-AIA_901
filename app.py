@@ -165,7 +165,7 @@ def main_entry():
                 # Use nlp processing to get start and finish
                 NLP = Nlp()
                 # (city_start, city_end) = NLP.predict(voice_result)
-                (city_start, city_end) = NLP.predict("Je veux arriver à la gare de lyon en partant de la gare saint roch")
+                (city_start, city_end) = NLP.predict("Je veux arriver à Paris en partant de Lille")
                 print(f'city start: {city_start}')
                 print(f'city end: {city_end}')
               except Exception as identifier:
@@ -187,15 +187,18 @@ def main_entry():
                 try:
                   # Use pathfinding processing to get the best path
                   PFP = PathFinder()
-                  path_result = PFP.find_path_networkx(city_start, city_end)
+                  path_result = PFP.find_path_networkx('Paris', 'Montpellier')
                   print('Path result : {}'.format(path_result))
                 except Exception as e:
                   conn.set('flow', 0)
                   conn.set('audio_received', 'false')
-                  print(e)
+                  print('error : {}'.format(e))
                 else:
-                  # Create the payload for the path response
-                  payload = {
+                  stops = path_result['stops']
+                  # Send a resume template with main informations
+                  stop_start = stops[0].swapcase()
+                  stop_end = stops[len(stops) - 1].swapcase()
+                  payload_resume = {
                     "recipient": {
                       "id": recipient_id
                     }, 
@@ -204,18 +207,10 @@ def main_entry():
                         "type": "template",
                         "payload": {
                           "template_type": "generic",
-                          "elements":[
+                          "elements": [
                             {
-                              "title":"Paris -> Lyon",
-                              "subtitle":"180 minutes",
-                            },
-                            {
-                              "title":"Lyon -> Aix-en-provence",
-                              "subtitle":"130 minutes",
-                            },
-                            {
-                              "title":"Aix-en-provence -> Montpellier",
-                              "subtitle":"80 minutes",
+                              'title': 'Trajet de {} à {}'.format(stop_start, stop_end),
+                              'subtitle': 'Temps total de {} minutes'.format(path_result['min'])
                             }
                           ]
                         }
@@ -223,9 +218,34 @@ def main_entry():
                     }
                   }
 
-                  # Send the result as a list template message 
-                  response = requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload)
-                  # print(response.json())
+                  # Send the pathway as a list template message 
+                  requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_resume)
+
+                  # Create the payload for the path response
+                  elements = []
+
+                  for item in path_result['path']:
+                    elements.append({
+                      'title': '{} -> {}'.format(item['start'].swapcase(), item['end'].swapcase()),
+                      'subtitle': '{} minutes'.format(item['duration'])
+                    })
+                  payload_list = {
+                    "recipient": {
+                      "id": recipient_id
+                    }, 
+                    "message": {
+                      "attachment": {
+                        "type": "template",
+                        "payload": {
+                          "template_type": "generic",
+                          "elements": elements
+                        }
+                      }
+                    }
+                  }
+
+                  # Send the pathway as a list template message 
+                  requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_list)
                 finally:
                   pass
               finally:
@@ -239,6 +259,9 @@ def main_entry():
                 conn.set('audio_received', 'false')
                 # Delete the tmp audio file
                 os.remove(pathfile)
+
+                # break the loop
+                break
 
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'

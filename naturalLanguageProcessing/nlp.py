@@ -110,7 +110,7 @@ class Nlp:
         isPhraseRevert = True
     
     print('isValidInstruction ? {}'.format(isValidInstruction))
-
+    print('End ? {}'.format(end))
     if (end == None or isValidInstruction == False):
       print('Bad phrase')
       raise Exception("Bad Phrase")

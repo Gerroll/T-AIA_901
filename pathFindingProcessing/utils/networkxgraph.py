@@ -16,18 +16,22 @@ class NetworkxGraph:
         path: list = nx.dijkstra_path(self.graph, depart, arrive, 'distance')
         target = {
             'min': length,
-            'path': path,
-            'duration': self.build_duration(path)
+            'stops': path,
+            'path': self.build_duration(path)
         }
         return target
 
     def build_duration(self, path):
-        target = {}
+        target = []
 
         if len(path) <= 1:
             raise Exception("path doesn't contains enough data")
         for i in range(0, len(path) - 1):
-            target[path[i] + "->" + path[i + 1]] = self.graph.edges[path[i], path[i + 1]]['distance']
+            target.append({
+              'start': path[i],
+              'end': path[i + 1],
+              'duration': self.graph.edges[path[i], path[i + 1]]['distance']
+            })
         return target
 
     def draw(self):
