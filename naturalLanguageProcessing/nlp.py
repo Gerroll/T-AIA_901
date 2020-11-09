@@ -8,6 +8,7 @@ from pathlib import Path
 from spacy.util import minibatch, compounding
 
 from .train_data import TRAIN_DATA
+from .BadPhraseException import BadPhraseException
 
 class Nlp:
 
@@ -61,28 +62,30 @@ class Nlp:
 			print("Saved model to", self.output_dir_Path)
 
 	def test(self):
-		texts = [
-			"Je souhaiterai aller à Besancon",
-			"Je souhaite aller de Saint-Jean-de-Védas à la gare de Saint-Roch",
-			"Je veux arriver à la gare Saint-Moret en partant de la gare de Vichy",
-			"Je veux arriver à Paris en partant de Lille",
-			"je voudrai manger une glace à Montpellier",
-			"je voudrai un aller-retour Paris - Montpellier",
-			"trajet Albi - Poitiers",
-			"Jean veut aller à Arcachon",
-			"Je veux les filles de Madrid à Paris",
-			"quel est le meilleur chemin entre Toulouse et Lille",
-			"j'ai envie d'aller jusqu'à Paris depuis Lyon",
-		]
-		docs = self.nlp.pipe(texts)
-
-		for doc in docs:
-			for token in doc.ents:
-				print(f'{token.text} ___ {token.label_}')
-
-			print(doc.text)
-			print([(t.text, t.dep_, t.head.text) for t in doc if t.dep_ != "-" ])
-			print("")
+		list_text = {
+			"Je veux arriver à Paris en partant de Lille" : ('Lille', 'Paris'),
+			"Je veux aller de Paris à Montpellier" : ('Paris', 'Montpellier'),
+			"Je veux arriver à la gare de Lyon en partant de la gare Saint-Roch" : ('gare Saint-Roch', 'gare de Lyon'),
+			"Je veux aller de Paris jusqu'à Montpellier" : ('Paris', 'Montpellier'),
+			"Je veux aller dans les Vosges depuis Paris" : ('Paris', 'Vosges'),
+			"Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch" : ('Saint-Jean-de-Védas', 'gare Saint-Roch'),
+			"Je voudrai arriver à la gare de Lyon" : ('Montpellier', 'gare de Lyon'),
+			"je voudrai un aller-retour Paris - Montpellier" : ('Paris', 'Montpellier'),
+			"je voudrai manger une glace à Montpellier" : "Bad Phrase",
+			"Une pizza 4 fromages Chtulhu Ftaghn" : "Bad Phrase",
+		}
+		for text, result in list_text.items():
+			try:
+				startEnd = self.predict(text)
+				if (startEnd == result):
+					print(True)
+				else:
+					print(f"Failed : startEnd = {startEnd}, result = {result}")
+			except BadPhraseException as e:
+				if (e.message == result):
+					print(True)
+				else:
+					print(e)
 
 	def predict(self, instruction):
 		doc = self.nlp(instruction)
@@ -92,6 +95,7 @@ class Nlp:
 		isPhraseRevert = False
 		start = "Montpellier" # default Location (geoloc ??)
 		end = None
+
 		for t in doc:
 			if (t.dep_ == "MOVE"):
 				isValidInstruction = True
@@ -108,9 +112,9 @@ class Nlp:
 				isPhraseRevert = True
 
 		if (end == None or isValidInstruction == False):
-			raise Exception("Bad Phrase")
+			raise BadPhraseException("No End or invalid instruction", "Bad Phrase")
  
-		# add "gare " in front of start or end or both
+		# add "gare ..." in front of start or end or both
 		prefix = ""
 		for gare in gare_head:
 			(start, end) = self.resolve_gare_name(gare, start, end , prefix, doc)
@@ -132,7 +136,7 @@ class Nlp:
 			if (len(doc) > gare.i + 1):
 				return self.resolve_gare_name(doc[gare.i + 1], start, end , prefix, doc)
 			else:
-				raise Exception("Bad Phrase")
+				raise BadPhraseException("Bad Gare Name", "Bad Phrase")
 
 	def reset(self):
 		try:
