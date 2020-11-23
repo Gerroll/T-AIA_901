@@ -154,7 +154,7 @@ TRAIN_DATA = [
         }
     ),
     (
-        "Je veux partir à Nice depuis Montpellier",
+        "Je veux partir à Nice depuis Paris",
         {
             "heads": [1, 1, 1, 4, 2, 6, 4],
             "deps": ["-", "ROOT", "MOVE", "-", "START", "REVERT", "END"]
@@ -177,22 +177,22 @@ TRAIN_DATA = [
     (
         "indique moi le trajet à Troyes en partant de Congnac",
         {
-            "heads": [0, 0, 2, 0, 5, 3, 7, 9, 7, 5],
-            "deps": ["ROOT", "-", "-", "MOVE", "-", "START", "REVERT", "REVERT", "-", "END"]
+            "heads": [0, 0, 2, 0, 5, 3, 7, 5, 9, 5],
+            "deps": ["ROOT", "-", "-", "MOVE", "-", "START", "-", "REVERT", "-", "END"]
         }
     ),
     (
-        "je voudrai arriver de Caen en partant de Morlaix",
+        "je voudrai arriver à Caen en partant de Morlaix",
         {
-            "heads": [1, 1, 1, 4, 2, 6, 8, 6, 4],
-            "deps": ["-", "ROOT", "MOVE", "-", "START", "REVERT", "REVERT", "-", "END"]
+            "heads": [1, 1, 1, 4, 2, 6, 4, 8, 4],
+            "deps": ["-", "ROOT", "MOVE", "-", "START", "-", "REVERT", "-", "END"]
         }
     ),
     (
-        "je veux arriver à la gare Saint-Lazare en partant de la gare de Sète",
+        "je veux arriver à la gare Roch en partant de la gare de Sète",
         {
-            "heads": [1, 1, 1, 5, 5, 6, 2, 7, 12, 7, 10, 12, 12, 6],
-            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "START", "REVERT", "REVERT", "-", "-", "GARE", "-", "END"]
+            "heads": [1, 1, 1, 5, 5, 6, 2, 8, 6, 11, 11, 13, 13, 6],
+            "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "START", "-", "REVERT", "-", "-", "GARE", "-", "END"]
         }
     ),
     (
@@ -203,10 +203,45 @@ TRAIN_DATA = [
         }
     ),
     (
-        "je souhaite partir à la gare de Narbonne",
+        "je souhaite partir de la gare de Narbonne",
         {
             "heads": [1, 1, 1, 5, 5, 7, 7, 2],
             "deps": ["-", "ROOT", "MOVE", "-", "-", "GARE", "-", "END"]
         }
-    )
+    ),
+    (
+        "Je veux aller de Paris jusqu'à Nice",
+        {
+            "heads": [1, 1, 1, 4, 2, 7, 7, 4],
+            "deps": ["-", "ROOT", "MOVE", "-", "START", "-", "-", "END"]
+        }
+    ),
+    (
+        "Je souhaite partir de Perpignan jusqu'à Paris",
+        {
+            "heads": [1, 1, 1, 4, 2, 7, 7, 4],
+            "deps": ["-", "ROOT", "MOVE", "-", "START", "-", "-", "END"]
+        }
+    ),
+    (
+        "J'aimerai l'itinéraire de Perpignan jusqu'à Paris",
+        {
+            "heads": [1, 1, 3, 1, 5, 3, 8, 8, 5],
+            "deps": ["-", "ROOT", "-", "MOVE", "-", "START", "-", "-", "END"]
+        }
+    ),
+    (
+        "Je souhaiterai aller à Dijon",
+        {
+            "heads": [1, 1, 1, 4, 2],
+            "deps": ["-", "ROOT", "MOVE", "-", "END"]
+        }
+    ),
+    (
+        "Je voudrai arriver à Biarritz",
+        {
+            "heads": [1, 1, 1, 4, 2],
+            "deps": ["-", "ROOT", "MOVE", "-", "END"]
+        }
+    ),
 ]

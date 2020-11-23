@@ -5,21 +5,25 @@ import speech_recognition as sr
 
 import sys
 
-
 def main():
 	voice_process = VoiceProcessing()
 	# A remplacer avec la récupéation du model
 	NLP = Nlp()
+ 
+	### a enlever si l'entrainement n'est pas nécessaire pour vous
 	# NLP.reset()
-	# NLP.train()
-	# examples(NLP)
+	# NLP.train(n_iter=100)
+	###
+
+	NLP.test()
 
 	try:
 		# Usecase: handling from a microphone
-		# resultFromVoice = voice_process.from_audio()
+		resultFromVoice = voice_process.from_audio()
 
 		# Usecase: handling from an audiofile
-		resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
+		# resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
+
 		start, end = NLP.predict(resultFromVoice)
 		print("Trajet", start, " - ", end)
 	except sr.RequestError:
@@ -30,29 +34,6 @@ def main():
 		return 1
 	except Exception as identifier:
 		print(identifier)
-
-
-def examples(NLP):
-	# NLP.reset()
-	# NLP.train()
-
-	# example a virer lors de l association des components
-	list_text = [
-		"Je souhaiterai aller à Besancon",
-		"Je veux aller dans les Vosges depuis Paris",
-		"Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch",
-		"Je voudrai arriver à la gare de Lyon",
-		"Je veux arriver à Paris en partant de Lille",
-		"je voudrai un aller-retour Paris - Montpellier",
-		"je voudrai manger une glace à Montpellier",
-		"Une pizza 4 fromages Chtulhu Ftaghn"
-	]
-	for text in list_text:
-		try:
-			print(NLP.predict(text))
-		except Exception as identifier:
-			print(identifier)
-
 
 if __name__ == "__main__":
 	main()
