@@ -31,3 +31,7 @@ class TestNLP(unittest.TestCase):
             except BadPhraseException as e:
                 self.assertEqual(e.message, result)
 
+    def test_isModelCreated(self):
+        NLP = Nlp()
+        self.assertEqual(True, NLP.isModelCreated())
+

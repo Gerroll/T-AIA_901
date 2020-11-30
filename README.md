@@ -1,6 +1,12 @@
 # T-AIA_901
 Voice recognition to return the optimal train route between two destination
 
+# Launch app
+python app.py
+
+# Launch test
+python test.py
+
 
 ##Voice Recognition 
 A utiliser sans venv 
