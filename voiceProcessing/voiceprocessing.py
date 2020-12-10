@@ -1,9 +1,11 @@
 import speech_recognition as sr
 from pydub import AudioSegment
 import ffmpeg
+import glob
 
 import os
 
+# AudioSegment.ffmpeg = '/usr/local/bin/ffmpeg'
 
 class VoiceProcessing:
     def __init__(self):
@@ -28,30 +30,28 @@ class VoiceProcessing:
     ### pathfile : chemin relatif depuis app.py
     #format : mp4
     def from_file(self, pathfile):
-        sourceMP4 = AudioSegment.from_file(pathfile, "mp4")
-        sourceMP4.export(pathfile +".flac", "flac")
-        r = sr.Recognizer()
+        said = ""
+        if os.path.isfile(pathfile + ".mp4"):
+          with open(pathfile + '.mp4') as f:
+            AudioSegment.from_file(pathfile + '.mp4').export(pathfile + ".flac", "flac")
 
-        source = sr.AudioFile(pathfile +".flac")
-        with source:
-            r.adjust_for_ambient_noise(source)
-            audio = r.record(source, duration=10)
+            with sr.AudioFile(pathfile + ".flac") as source:
+              self.recognizer.adjust_for_ambient_noise(source)
+              audio = self.recognizer.record(source, duration=10)
 
-            said = ""
-            os.remove(pathfile + ".flac")
+              os.remove(pathfile + ".flac")
 
-            try:
-                said = r.recognize_google(audio, language='fr-FR')
-                print(said)
-            except sr.RequestError as e:
+              try:
+                said = self.recognizer.recognize_google(audio, language='fr-FR')
+              except sr.RequestError as e:
                 raise e
 
-            except sr.UnknownValueError as e:
+              except sr.UnknownValueError as e:
                 raise e
+        else:
+          print(f'File {pathfile}.mp4 does not exist.')
 
         return said
-
-        print(r.recognize_google(audioToAnalyze, language='fr-FR'))
 
     ###Fonction de définition du recognizer pour en modifier les attributs, (cf Speech Recognition Library Reference)
     def init_recognizer(self):

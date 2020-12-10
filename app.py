@@ -120,55 +120,19 @@ def main_entry():
               url = attachment_payload['url']
               # download audio and store it in temporary file
               audio_file = requests.get(url)
-              pathfile = f'./tmp-{ts}.mp4'
-              open(pathfile, 'wb').write(audio_file.content)
-
-              # Use voice processing to transform to texts
-              # VP = VoiceProcessing()
-              # try:
-              #   # Usecase: handling from a microphone
-              #   # resultFromVoice = voice_process.from_audio()
-              #   # Usecase: handling from an audiofile
-              #   voice_result = VP.from_file(pathfile=pathfile)
-              #   print(voice_result)
-              # except sr.RequestError as e:
-              #   conn.set('flow', 0)
-              #   conn.set('audio_received', 'false')
-              #   # Send a message asking user to send an other file audio
-              #   payload_error = {
-              #     "recipient": {
-              #       "id": recipient_id
-              #     },
-              #     "message": {
-              #       "text": "Problème de connexion, merci de réessayer plus tard.",
-              #     }
-              #   }
-              #   requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
-              # except sr.UnknownValueError as e:
-              #   conn.set('flow', 0)
-              #   conn.set('audio_received', 'false')
-              #   # Send a message asking user to send an other file audio
-              #   payload_error = {
-              #     "recipient": {
-              #       "id": recipient_id
-              #     },
-              #     "message": {
-              #       "text": "Message audio incompréhensible, merci de reformuler votre requête.",
-              #     }
-              #   }
-              #   requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
-              # else:
-              # Set redis user flow variable
-              conn.set('flow', 2)
+              pathfile = os.path.basename(f'./tmp-{ts}')
+              open(pathfile + '.mp4', 'wb').write(audio_file.content)
 
               try:
-                # Use nlp processing to get start and finish
-                NLP = Nlp()
-                # (city_start, city_end) = NLP.predict(voice_result)
-                (city_start, city_end) = NLP.predict("Je veux arriver à Paris en partant de Lille")
-                print(f'city start: {city_start}')
-                print(f'city end: {city_end}')
-              except Exception as identifier:
+                print('Start voice processing')
+                # Use voice processing to transform to texts
+                VP = VoiceProcessing()
+                # Usecase: handling from a microphone
+                # resultFromVoice = voice_process.from_audio()
+                # Usecase: handling from an audiofile
+                voice_result = VP.from_file(pathfile=pathfile)
+                print('Voice result :', voice_result)
+              except sr.RequestError as e:
                 conn.set('flow', 0)
                 conn.set('audio_received', 'false')
                 # Send a message asking user to send an other file audio
@@ -177,80 +141,115 @@ def main_entry():
                     "id": recipient_id
                   },
                   "message": {
-                    "text": f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis."
+                    "text": "Problème de connexion, merci de réessayer plus tard.",
+                  }
+                }
+                requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
+              except sr.UnknownValueError as e:
+                conn.set('flow', 0)
+                conn.set('audio_received', 'false')
+                # Send a message asking user to send an other file audio
+                payload_error = {
+                  "recipient": {
+                    "id": recipient_id
+                  },
+                  "message": {
+                    "text": "Message audio incompréhensible, merci de reformuler votre requête.",
                   }
                 }
                 requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
               else:
                 # Set redis user flow variable
-                conn.set('flow', 3)
+                conn.set('flow', 2)
+
                 try:
-                  # Use pathfinding processing to get the best path
-                  PFP = PathFinder()
-                  path_result = PFP.find_path_networkx('Paris', 'Montpellier')
-                  print('Path result : {}'.format(path_result))
-                except Exception as e:
+                  print('Start natural language processing')
+                  # Use nlp processing to get start and finish
+                  NLP = Nlp()
+                  # (city_start, city_end) = NLP.predict(voice_result)
+                  (city_start, city_end) = NLP.predict(voice_result)
+                  print(f'city start: {city_start}')
+                  print(f'city end: {city_end}')
+                except Exception as identifier:
                   conn.set('flow', 0)
                   conn.set('audio_received', 'false')
-                  print('error : {}'.format(e))
+                  # Send a message asking user to send an other file audio
+                  payload_error = {
+                    "recipient": {
+                      "id": recipient_id
+                    },
+                    "message": {
+                      "text": f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis."
+                    }
+                  }
+                  requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_error)
                 else:
-                  stops = path_result['stops']
-                  # Send a resume template with main informations
-                  stop_start = stops[0].swapcase()
-                  stop_end = stops[len(stops) - 1].swapcase()
-                  payload_resume = {
-                    "recipient": {
-                      "id": recipient_id
-                    }, 
-                    "message": {
-                      "attachment": {
-                        "type": "template",
-                        "payload": {
-                          "template_type": "generic",
-                          "elements": [
-                            {
-                              'title': 'Trajet de {} à {}'.format(stop_start, stop_end),
-                              'subtitle': 'Temps total de {} minutes'.format(path_result['min'])
-                            }
-                          ]
+                  # Set redis user flow variable
+                  conn.set('flow', 3)
+                  try:
+                    print('Start pathfinding')
+                    # Use pathfinding processing to get the best path
+                    PFP = PathFinder()
+                    path_result = PFP.find_path_networkx(city_start, city_end)
+                    print('Path result : {}'.format(path_result))
+                  except Exception as e:
+                    conn.set('flow', 0)
+                    conn.set('audio_received', 'false')
+                    print('error : {}'.format(e))
+                  else:
+                    stops = path_result['stops']
+                    # Send a resume template with main informations
+                    stop_start = stops[0].swapcase()
+                    stop_end = stops[len(stops) - 1].swapcase()
+                    payload_resume = {
+                      "recipient": {
+                        "id": recipient_id
+                      }, 
+                      "message": {
+                        "attachment": {
+                          "type": "template",
+                          "payload": {
+                            "template_type": "generic",
+                            "elements": [
+                              {
+                                'title': 'Trajet de {} à {}'.format(city_start, city_end),
+                                'subtitle': 'Temps total de {} minutes'.format(path_result['min'])
+                              }
+                            ]
+                          }
                         }
                       }
                     }
-                  }
 
-                  # Send the pathway as a list template message 
-                  requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_resume)
+                    # Send the pathway as a list template message 
+                    requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_resume)
 
-                  # Create the payload for the path response
-                  elements = []
+                    # Create the payload for the path response
+                    elements = []
 
-                  for item in path_result['path']:
-                    elements.append({
-                      'title': '{} -> {}'.format(item['start'].swapcase(), item['end'].swapcase()),
-                      'subtitle': '{} minutes'.format(item['duration'])
-                    })
-                  payload_list = {
-                    "recipient": {
-                      "id": recipient_id
-                    }, 
-                    "message": {
-                      "attachment": {
-                        "type": "template",
-                        "payload": {
-                          "template_type": "generic",
-                          "elements": elements
+                    for item in path_result['path']:
+                      elements.append({
+                        'title': '{} -> {}'.format(item['start'].swapcase(), item['end'].swapcase()),
+                        'subtitle': '{} minutes'.format(item['duration'])
+                      })
+                    payload_list = {
+                      "recipient": {
+                        "id": recipient_id
+                      }, 
+                      "message": {
+                        "attachment": {
+                          "type": "template",
+                          "payload": {
+                            "template_type": "generic",
+                            "elements": elements
+                          }
                         }
                       }
                     }
-                  }
 
-                  # Send the pathway as a list template message 
-                  requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_list)
-                finally:
-                  pass
+                    # Send the pathway as a list template message 
+                    requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_list)
               finally:
-                # pass
-                # finally:
                 voice_result = None
                 path_result = None
                 city_start = None
@@ -258,13 +257,27 @@ def main_entry():
                 conn.set('flow', 0)
                 conn.set('audio_received', 'false')
                 # Delete the tmp audio file
-                os.remove(pathfile)
+                os.remove(pathfile + '.mp4')
 
-                # break the loop
-                break
+                
+          elif 'is_echo' not in webhook_data['message'] and 'text' in webhook_data['message']: # the user send a text message
+            # Send a message asking user to send an other file audio
+            payload_text_received = {
+              "recipient": {
+                "id": recipient_id
+              },
+              "message": {
+                "text": f"Désolé, mais ce chatbot ne traite que les messages audios. Merci de recommencer."
+              }
+            }
+            requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_text_received)
+
+        # break the loop
+        break
 
       # Returns a '200 OK' response to all requests
       return 'EVENT_RECEIVED'
+
     else:
       # Returns a '404 Not Found' if event is not from a page subscription
       abort(404)
@@ -277,16 +290,21 @@ def main():
 	voice_process = VoiceProcessing()
 	# A remplacer avec la récupéation du model
 	NLP = Nlp()
+ 
+	### a enlever si l'entrainement n'est pas nécessaire pour vous
 	# NLP.reset()
-	# NLP.train()
-	# examples(NLP)
+	# NLP.train(n_iter=100)
+	###
+
+	NLP.test()
 
 	try:
 		# Usecase: handling from a microphone
-		# resultFromVoice = voice_process.from_audio()
+		resultFromVoice = voice_process.from_audio()
 
 		# Usecase: handling from an audiofile
-		resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
+		# resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
+
 		start, end = NLP.predict(resultFromVoice)
 		print("Trajet", start, " - ", end)
 	except sr.RequestError:
@@ -298,28 +316,7 @@ def main():
 	except Exception as identifier:
 		print(identifier)
 
-
-
-def examples(NLP):
-	# NLP.reset()
-	# NLP.train()
-
-	# example a virer lors de l association des components
-	list_text = [
-		"Je souhaiterai aller à Besancon",
-		"Je veux aller dans les Vosges depuis Paris",
-		"Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch",
-		"Je voudrai arriver à la gare de Lyon",
-		"Je veux arriver à Paris en partant de Lille",
-		"je voudrai un aller-retour Paris - Montpellier",
-		"je voudrai manger une glace à Montpellier",
-		"Une pizza 4 fromages Chtulhu Ftaghn"
-	]
-	for text in list_text:
-		try:
-			print(NLP.predict(text))
-		except Exception as identifier:
-			print(identifier)
-
 if __name__ == "__main__":
-    resetNlp()
+  # Reset NLP by hand if you want a MAJ on it before pushing repo into production (heroku)
+  resetNlp()
+
