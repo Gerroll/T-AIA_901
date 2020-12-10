@@ -188,67 +188,69 @@ def main_entry():
                   conn.set('flow', 3)
                   try:
                     print('Start pathfinding')
-                    # Use pathfinding processing to get the best path
-                    PFP = PathFinder()
-                    path_result = PFP.find_path_networkx(city_start, city_end)
-                    print('Path result : {}'.format(path_result))
+                    if city_start and city_end:
+                      # Use pathfinding processing to get the best path
+                      PFP = PathFinder()
+                      path_result = PFP.find_path_networkx(city_start, city_end)
+                      print('Path result : {}'.format(path_result))
                   except Exception as e:
                     conn.set('flow', 0)
                     conn.set('audio_received', 'false')
                     print('error : {}'.format(e))
                   else:
-                    stops = path_result['stops']
-                    # Send a resume template with main informations
-                    stop_start = stops[0].swapcase()
-                    stop_end = stops[len(stops) - 1].swapcase()
-                    payload_resume = {
-                      "recipient": {
-                        "id": recipient_id
-                      }, 
-                      "message": {
-                        "attachment": {
-                          "type": "template",
-                          "payload": {
-                            "template_type": "generic",
-                            "elements": [
-                              {
-                                'title': 'Trajet de {} à {}'.format(city_start, city_end),
-                                'subtitle': 'Temps total de {} minutes'.format(path_result['min'])
-                              }
-                            ]
+                    if path_result:
+                      stops = path_result['stops']
+                      # Send a resume template with main informations
+                      stop_start = stops[0].swapcase()
+                      stop_end = stops[len(stops) - 1].swapcase()
+                      payload_resume = {
+                        "recipient": {
+                          "id": recipient_id
+                        }, 
+                        "message": {
+                          "attachment": {
+                            "type": "template",
+                            "payload": {
+                              "template_type": "generic",
+                              "elements": [
+                                {
+                                  'title': 'Trajet de {} à {}'.format(city_start, city_end),
+                                  'subtitle': 'Temps total de {} minutes'.format(path_result['min'])
+                                }
+                              ]
+                            }
                           }
                         }
                       }
-                    }
 
-                    # Send the pathway as a list template message 
-                    requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_resume)
+                      # Send the pathway as a list template message 
+                      requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_resume)
 
-                    # Create the payload for the path response
-                    elements = []
+                      # Create the payload for the path response
+                      elements = []
 
-                    for item in path_result['path']:
-                      elements.append({
-                        'title': '{} -> {}'.format(item['start'].swapcase(), item['end'].swapcase()),
-                        'subtitle': '{} minutes'.format(item['duration'])
-                      })
-                    payload_list = {
-                      "recipient": {
-                        "id": recipient_id
-                      }, 
-                      "message": {
-                        "attachment": {
-                          "type": "template",
-                          "payload": {
-                            "template_type": "generic",
-                            "elements": elements
+                      for item in path_result['path']:
+                        elements.append({
+                          'title': '{} -> {}'.format(item['start'].swapcase(), item['end'].swapcase()),
+                          'subtitle': '{} minutes'.format(item['duration'])
+                        })
+                      payload_list = {
+                        "recipient": {
+                          "id": recipient_id
+                        }, 
+                        "message": {
+                          "attachment": {
+                            "type": "template",
+                            "payload": {
+                              "template_type": "generic",
+                              "elements": elements
+                            }
                           }
                         }
                       }
-                    }
 
-                    # Send the pathway as a list template message 
-                    requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_list)
+                      # Send the pathway as a list template message 
+                      requests.post(f'https://graph.facebook.com/v2.6/me/messages?access_token={ACCESS_TOKEN}', json=payload_list)
               finally:
                 voice_result = None
                 path_result = None
