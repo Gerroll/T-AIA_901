@@ -1,0 +1,159 @@
+<html>
+  <head>
+    <title>T-AIA-900</title>
+    <script type = "text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <style>
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      .container {
+        width: 80%;
+        margin: auto;
+        margin-top: 100px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+      }
+
+      .container__section {
+        margin: 10px;
+      }
+
+      .presentation {
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .voicing {
+        width: 20%;
+        display: flex;
+        align-items: center;
+      }
+
+      .voicing svg {
+        cursor: pointer;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #mic-off p {
+        text-align: center;
+      }
+
+      .display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .disabled {
+        pointer-events: none;
+        cursor: default;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <section class="container__section presentation">
+        <h1>Bienvenue sur ce programme d'intelligence artificielle !</h1>
+        <p>
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+        </p>
+      </section>
+      <section class="container__section voicing">
+        <svg id="mic-on" class="mic display" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#20c997" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mic"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <div id="mic-off" class="mic hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mic-off"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <p>Appuie de nouveau sur le micro pour arreter l'enregistrement.</p>
+        </div>
+      </section>
+    </div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(() => {
+      let chunks = []
+      let isRecording = false;
+      let mediaRecorder = null;
+      
+      getMedia().then(stream => {
+        const options = {
+          audioBitsPerSecond : 128000,
+          mimeType : 'audio/mpeg'
+        }
+        mediaRecorder = new MediaRecorder(stream)
+
+        mediaRecorder.ondataavailable = e => {
+          // push recording audio stream into our chunk
+          chunks.push(e.data)
+        }
+
+        mediaRecorder.onstop = e => {
+          // create our audio element
+          const audio = document.createElement('audio')
+          $( ".container" ).append(audio)
+          // generate the blob and audio file
+          const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' })
+          const audioURL = window.URL.createObjectURL(blob)
+          audio.src = audioURL
+          chunks = []
+
+          // @TODO : send the audio BLOB to backend. AJAX ?
+        }
+      })
+
+      function startRecord(mediaRecorder) {
+        mediaRecorder.start()
+        isRecording = true
+        $('#mic-on.display').removeClass('display').addClass('hidden')
+        $('#mic-off.hidden').removeClass('hidden').addClass('display')
+      }
+      
+      function stopRecord(mediaRecorder) {
+        mediaRecorder.stop()
+        isRecording = false
+        $('#mic-off.display').removeClass('display').addClass('hidden')
+        $('#mic-on.hidden').removeClass('hidden').addClass('display').addClass('disabled')
+        $('#mic-on.disabled').attr('stroke', '#adb5bd')
+      }
+
+      async function getMedia() {
+        try {
+          let stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false})
+          return stream
+        } catch(err) {
+          /* handle the error */
+          console.log(err);
+          return null;
+        }
+      }
+
+      $('.voicing svg').click(event => {
+        if (mediaRecorder.state == 'inactive') {
+          startRecord(mediaRecorder)
+        } else if (mediaRecorder.state == 'recording') {
+          stopRecord(mediaRecorder)
+        }
+        console.log(mediaRecorder.state)
+      });
+    });
+  </script>
+</html>

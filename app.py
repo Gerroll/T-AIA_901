@@ -2,14 +2,12 @@
 from naturalLanguageProcessing import Nlp
 from pathFindingProcessing import PathFinder
 from voiceProcessing import VoiceProcessing
-from chatbot import Chatbot
+from controllers import MainController
 import speech_recognition as sr
 
 # Others
 import sys
 import requests
-from rq import Queue
-# import redis
 
 # Flask
 from flask import Flask
@@ -27,39 +25,30 @@ def resetNlp():
 """ Just home route """
 @app.route('/')
 def home():
-  return 'Hello World, do you like trains ?', 200
+  # generate uniq id for our user
+  uniqid = 'AUHzdqoid561&é"'
+  # render home page
+  return render_template('home.html')
 
-""" CGU route """
-@app.route('/cgu')
-def cgu():
-  return render_template('cgu.html')
-
-""" Init chatbot, IA, and others stuff """
-@app.route('/init', methods=['GET'])
-def init_entry():
-  # Create redis queue
-  q = Queue(connection=conn)
-
-  # Queue reset nlp
-  q.enqueue(resetNlp, result_ttl=0, job_timeout=3600)
-
-  return 'Chatbot initialized !'
-
-""" Webhook for facebook chatbot """
-@app.route('/webhook', methods=['GET', 'POST'])
-def main_entry():
+""" Process route """
+@app.route('/process', methods=['POST'])
+def process():
   # initialise components
   VP = VoiceProcessing()
   NLP = Nlp()
   PF = PathFinder()
   # initialise chatbot
-  chatbot = Chatbot(VP, NLP, PF)
+  processor = MainController(VP, NLP, PF)
 
   # dispatch request
-  res = chatbot.dispatch_request(request)
+  res = processor.process_post_request(request)
 
   # return result 'MESSAGE', STATUS_CODE
-  return res[1], res[2]
+  # return res[1], res[2]
+
+  # render template result
+  return render_template('result.html')
+
 
 
 """ Main program """
