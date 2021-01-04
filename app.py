@@ -17,6 +17,7 @@ import redis
 from flask import Flask
 from flask import request
 from flask import abort
+from flask import render_template
 
 app = Flask(__name__)
 
@@ -32,8 +33,13 @@ def resetNlp():
 
 """ Just home route """
 @app.route('/')
-def hello():
-  return 'Hello World, do you like trains ?'
+def home():
+  return 'Hello World, do you like trains ?', 200
+
+""" CGU route """
+@app.route('/cgu')
+def cgu():
+  return render_template('cgu.html')
 
 """ Init chatbot, IA, and others stuff """
 @app.route('/init', methods=['GET'])
