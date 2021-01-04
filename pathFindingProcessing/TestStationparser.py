@@ -1,7 +1,7 @@
 import unittest
 
 
-class TestPathFinding(unittest.TestCase):
+class TestStationparser(unittest.TestCase):
 
     def test_upper(self):
         self.assertEqual('foo'.upper(), 'FOO')

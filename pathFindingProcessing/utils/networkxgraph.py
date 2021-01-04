@@ -22,12 +22,16 @@ class NetworkxGraph:
         return target
 
     def build_duration(self, path):
-        target = {}
+        target = []
 
         if len(path) <= 1:
             raise Exception("path doesn't contains enough data")
         for i in range(0, len(path) - 1):
-            target[path[i] + "->" + path[i + 1]] = self.graph.edges[path[i], path[i + 1]]['distance']
+            target.append({
+                'start': path[i],
+                'end': path[i + 1],
+                'duration': self.graph.edges[path[i], path[i + 1]]['distance']
+            })
         return target
 
     def draw(self):
