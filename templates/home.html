@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>T-AIA-900</title>
+    <title>T-AIA-900 - Home page</title>
     <script type = "text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <style>
       body {
@@ -118,6 +118,25 @@
           chunks = []
 
           // @TODO : send the audio BLOB to backend. AJAX ?
+          $.ajax({
+            method: 'POST',
+            url: '/process',
+            dataType: 'json',
+            contentType: 'application/json;charset=UTF-8',
+            data: {
+              userId: $('input[name=userId]').val(),
+              audio: audioUrl
+            },
+            error: (xhr, resp, text) => {
+              console.log(xhr, resp, text);
+            },
+            success: (result) => {
+              console.log(result)
+              // redirect to result page
+              // window.location.href = '/result'
+            }
+          })
+          .error()
         }
       })
 

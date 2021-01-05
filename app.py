@@ -24,19 +24,30 @@ def resetNlp():
   NLP.train()
   NLP.test()
 
-""" Just home route """
+""" Home route """
 @app.route('/')
 def home():
   # generate uniq id for our user
-  userId = None
-  # store it in session
-  if 'userId' in session:
-    userId = session['userId']
-  else:
+  if 'userId' not in session:
     userId = os.urandom(16)
     session['userId'] = userId
+
+  # clean session for result
+  if 'result' in session:
+    session.pop('result')
+
   # render home page
   return render_template('home.html')
+
+""" Result route """
+@app.route('/result')
+def result():
+  # store it in session
+  if 'userId' in session and 'result' in session:
+    # render result page
+    return render_template('result.html')
+  else:
+    return redirect(url_for('home'))
 
 """ Process route """
 @app.route('/process', methods=['POST'])
@@ -52,11 +63,11 @@ def process():
   # dispatch request
   res = processor.process_post_request(request)
 
-  # return result 'MESSAGE', STATUS_CODE
-  # return res[1], res[2]
+  # save result to session
+  session['result'] = res['result']
 
-  # render template result
-  return render_template('result.html')
+  # return result 'MESSAGE', STATUS_CODE
+  return res['STATUS_CODE']
 
 
 

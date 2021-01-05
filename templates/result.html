@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <title>T-AIA-900 - Result page</title>
+    <script type = "text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <style>
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      .container {
+        width: 80%;
+        margin: auto;
+        margin-top: 100px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+      }
+
+      .container__section {
+        margin: 10px;
+      }
+
+      .presentation {
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .result {
+        width: 20%;
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <section class="container__section presentation">
+        <h1>Bienvenue sur ce programme d'intelligence artificielle !</h1>
+        <p>
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+          lorem ipsum dolor sit amet, consectetur adip 
+        </p>
+      </section>
+      <section class="container__section result">
+        
+      </section>
+    </div>
+    <input type="hidden" value="{{ session['userId'] }}" name="userId" />
+  </body>
+  <script type="text/javascript">
+    $(document).ready(() => {
+     
+    });
+  </script>
+</html>
