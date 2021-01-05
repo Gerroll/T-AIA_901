@@ -7,14 +7,16 @@ import speech_recognition as sr
 
 # Others
 import sys
+import os
 import requests
 
 # Flask
-from flask import Flask
-from flask import request
-from flask import render_template
+from flask import Flask, session, request, render_template
 
 app = Flask(__name__)
+
+# Set the secret key to some random bytes. Keep this really secret!
+app.secret_key = b'_8#y2o"J4Q9z\n\xec]/'
 
 def resetNlp():
   NLP = Nlp()
@@ -26,13 +28,20 @@ def resetNlp():
 @app.route('/')
 def home():
   # generate uniq id for our user
-  uniqid = 'AUHzdqoid561&é"'
+  userId = None
+  # store it in session
+  if 'userId' in session:
+    userId = session['userId']
+  else:
+    userId = os.urandom(16)
+    session['userId'] = userId
   # render home page
   return render_template('home.html')
 
 """ Process route """
 @app.route('/process', methods=['POST'])
 def process():
+  # get the userId in request args and check it's egal to our session['userId]
   # initialise components
   VP = VoiceProcessing()
   NLP = Nlp()
