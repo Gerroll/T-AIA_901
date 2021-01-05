@@ -15,19 +15,18 @@ class MainController:
 
     self.flow = 0
     self.audio_received = False
-    self.user = None
   
-  def process_post_request(self, request):
-    data = request.get_json(force=True)
+  def process_audio(self, data):
     ts = time.time()
     pathfile = os.path.basename(f'./tmp-{ts}')
     voice_result = None
     path_result = None
     city_start = None
     city_end = None
+    result = []
 
     # download audio and store it in temporary file
-    audio_file = requests.get(url)
+    audio_file = requests.get(data)
     open(pathfile + '.mp4', 'wb').write(audio_file.content)
 
     try:
@@ -55,7 +54,6 @@ class MainController:
       # )
 
     else:
-      # Set redis user flow variable
       self.flow = 2
 
       try:
@@ -72,7 +70,6 @@ class MainController:
         # self.send_text_payload(f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis.")
 
       else:
-        # Set redis user flow variable
         self.flow = 3
 
         try:
@@ -122,35 +119,5 @@ class MainController:
           os.remove(pathfile + '.mp4')
 
     # Returns a '200 OK' response to all requests
-    return ('POST', 'EVENT_RECEIVED', 200)
-
-  def send_text_payload(self, message=None):
-    if self.user and message:
-      payload = {
-        "recipient": {
-          "id": self.user
-        },
-        "message": {
-          "text": message,
-        }
-      }
-      requests.post(self.facebook_url, json=payload)
-  
-  def send_generic_payload(self, elements=None):
-    if self.user and elements and len(elements) > 0:
-      payload = {
-        "recipient": {
-          "id": self.user
-        }, 
-        "message": {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "generic",
-              "elements": elements
-            }
-          }
-        }
-      }
-      requests.post(self.facebook_url, json=payload)
+    return (result, 200)
 

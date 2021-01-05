@@ -121,11 +121,13 @@
           $.ajax({
             method: 'POST',
             url: '/process',
-            dataType: 'json',
-            contentType: 'application/json;charset=UTF-8',
-            data: {
+            // contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify({
               userId: $('input[name=userId]').val(),
-              audio: audioUrl
+              audio: $('audio').attr('src')
+            }),
+            beforeSend: xhr => {
+              console.log(xhr)
             },
             error: (xhr, resp, text) => {
               console.log(xhr, resp, text);
@@ -136,7 +138,6 @@
               // window.location.href = '/result'
             }
           })
-          .error()
         }
       })
 

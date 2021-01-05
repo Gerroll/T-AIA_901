@@ -52,22 +52,26 @@ def result():
 """ Process route """
 @app.route('/process', methods=['POST'])
 def process():
+  data = request.get_json(force=True)
   # get the userId in request args and check it's egal to our session['userId]
-  # initialise components
-  VP = VoiceProcessing()
-  NLP = Nlp()
-  PF = PathFinder()
-  # initialise chatbot
-  processor = MainController(VP, NLP, PF)
+  if session['userId'] and str(data['userId']) == str(session['userId']) and data['audio']:
+    # initialise components
+    VP = VoiceProcessing()
+    NLP = Nlp()
+    PF = PathFinder()
+    # initialise chatbot
+    processor = MainController(VP, NLP, PF)
 
-  # dispatch request
-  res = processor.process_post_request(request)
+    # dispatch request
+    res = processor.process_audio(data['audio'])
 
-  # save result to session
-  session['result'] = res['result']
+    # save result to session
+    session['result'] = res[0]
 
-  # return result 'MESSAGE', STATUS_CODE
-  return res['STATUS_CODE']
+    # return result 'MESSAGE', STATUS_CODE
+    return dict({'status': res[1]})
+  else:
+    return dict({'status': 401})
 
 
 
