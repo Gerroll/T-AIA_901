@@ -11,7 +11,7 @@ import os
 import requests
 
 # Flask
-from flask import Flask, session, request, render_template
+from flask import Flask, session, request, render_template, redirect, url_for
 
 app = Flask(__name__)
 
@@ -73,7 +73,7 @@ def process():
     # dispatch request
     res = processor.process_audio(audio)
     print(res)
-    
+
     # save result to session
     session['result'] = res[0]
 
