@@ -27,13 +27,14 @@ class VoiceProcessing:
                raise e
 
         return said
+        
     ### pathfile : chemin relatif depuis app.py
-    #format : mp4
+    #format : mp3
     def from_file(self, pathfile):
         said = ""
-        if os.path.isfile(pathfile + ".mp4"):
-          with open(pathfile + '.mp4') as f:
-            AudioSegment.from_file(pathfile + '.mp4').export(pathfile + ".flac", "flac")
+        if os.path.isfile(pathfile + ".mp3"):
+          with open(pathfile + '.mp3') as f:
+            AudioSegment.from_file(pathfile + '.mp3').export(pathfile + ".flac", "flac")
 
             with sr.AudioFile(pathfile + ".flac") as source:
               self.recognizer.adjust_for_ambient_noise(source)

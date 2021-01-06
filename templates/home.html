@@ -45,7 +45,7 @@
         margin-right: auto;
       }
 
-      #mic-off p {
+      #mic-off p, #mic-loading p {
         text-align: center;
       }
 
@@ -71,12 +71,18 @@
       <section class="container__section presentation">
         <h1>Bienvenue sur ce programme d'intelligence artificielle !</h1>
         <p>
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
+          Ce programme à pur but d'appliquer les techniques de <b>Natural Language Processing</b>, <b>Speech To Text</b> et de <b>Pathfinding</b>, afin de trouver le chemin en train le plus court entre deux villes. 
+        </p>
+        <p>
+          Il a été réalisé dans le cadre du <b>Master Professionnel 2ème année à EPITECH, année 2021</b>.
+        </p>
+        <p>
+          Il a été créée par <i>Maxime Gavens</i>, <i>Arnaud Brown</i>, <i>Jean Bosc</i>, <i>Théo Walcker</i> et <i>Mathieu Dufour</i>.
+        </p>
+        <p class="presentation__instructions">
+          Afin de lancer le programme, veuillez accepter l'utilisation du microphone de votre ordinateur par ce site web et cliquez sur le microphone vert.
+          Vous pouvez ensuite demander un trajet entre deux villes.
+          Par exemple : "Je veux aller de Paris à Bordeaux" ou encore "Je veux aller à Montpellier en partant de Lyon".
         </p>
       </section>
       <section class="container__section voicing">
@@ -85,6 +91,10 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mic-off"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
           <p>Appuie de nouveau sur le micro pour arreter l'enregistrement.</p>
         </div>
+        <div id="mic-loading" class="mic hidden disabled">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#adb5bd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mic"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <p>En cours de traitement, veuillez patienter...</p>
+          </div>
       </section>
     </div>
     <input type="hidden" value="{{ session['userId'] }}" name="userId" />
@@ -96,10 +106,6 @@
       let mediaRecorder = null;
       
       getMedia().then(stream => {
-        const options = {
-          audioBitsPerSecond : 128000,
-          mimeType : 'audio/mpeg'
-        }
         mediaRecorder = new MediaRecorder(stream)
 
         mediaRecorder.ondataavailable = e => {
@@ -112,20 +118,21 @@
           const audio = document.createElement('audio')
           $( ".container" ).append(audio)
           // generate the blob and audio file
-          const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' })
-          const audioURL = window.URL.createObjectURL(blob)
-          audio.src = audioURL
+          let blob = new Blob(chunks, { 'type' : 'audio/mp3' })
           chunks = []
 
-          // @TODO : send the audio BLOB to backend. AJAX ?
+          // data top send
+          let formData = new FormData()
+          formData.append('userId', $('input[name=userId]').val())
+          formData.append('audio', blob, 'record.mp3')
+
+          // request
           $.ajax({
             method: 'POST',
             url: '/process',
-            // contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify({
-              userId: $('input[name=userId]').val(),
-              audio: $('audio').attr('src')
-            }),
+            processData: false,
+            contentType: false,
+            data: formData,
             beforeSend: xhr => {
               console.log(xhr)
             },
@@ -135,7 +142,12 @@
             success: (result) => {
               console.log(result)
               // redirect to result page
-              // window.location.href = '/result'
+              if (result.status == 200) {
+                window.location.href = '/result'
+              } else {
+                // error during process
+                // TODO - display error to user
+              }
             }
           })
         }
@@ -152,8 +164,7 @@
         mediaRecorder.stop()
         isRecording = false
         $('#mic-off.display').removeClass('display').addClass('hidden')
-        $('#mic-on.hidden').removeClass('hidden').addClass('display').addClass('disabled')
-        $('#mic-on.disabled').attr('stroke', '#adb5bd')
+        $('#mic-loading.hidden').removeClass('hidden').addClass('display')
       }
 
       async function getMedia() {

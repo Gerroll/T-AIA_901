@@ -1,6 +1,7 @@
 import requests
 from flask import request
 from flask import abort
+import speech_recognition as sr
 
 import os
 import time
@@ -23,42 +24,41 @@ class MainController:
     path_result = None
     city_start = None
     city_end = None
-    result = []
+    result = {
+      'start': None,
+      'end': None,
+      'total': None,
+      'path': []
+    }
 
-    # download audio and store it in temporary file
-    audio_file = requests.get(data)
-    open(pathfile + '.mp4', 'wb').write(audio_file.content)
+    # download audio and store it in file
+    with open(pathfile + '.mp3', 'wb+') as f:
+        for chunk in data: 
+            if chunk: # filter out keep-alive new chunks
+                f.write(chunk)
 
     try:
       print('Start voice processing')
       # Usecase: handling from an audiofile
-      voice_result = self.voiceModule.from_file(pathfile=pathfile)
+      voice_result = self.voiceModule.from_file(pathfile)
       print('Voice result :', voice_result)
 
     except sr.RequestError as e:
       self.flow = 0
       self.audio_received = False
-      # Send a message asking user to send an other file audio
-      # self.send_text_payload(
-      #   self.user,
-      #   "Problème de connexion, merci de réessayer plus tard."
-      # )
+      return ("Problème de connexion, merci de réessayer plus tard.", 666)
+
 
     except sr.UnknownValueError as e:
       self.flow = 0
       self.audio_received = False
-      # Send a message asking user to send an other file audio
-      # self.send_text_payload(
-      #   self.user,
-      #   "Message audio incompréhensible, merci de reformuler votre requête."
-      # )
+      return ("Message audio incompréhensible, merci de reformuler votre requête.", 666)
 
     else:
       self.flow = 2
 
       try:
         print('Start natural language processing')
-        # (city_start, city_end) = NLP.predict(voice_result)
         (city_start, city_end) = self.nlpModule.predict(voice_result)
         print(f'city start: {city_start}')
         print(f'city end: {city_end}')
@@ -66,8 +66,7 @@ class MainController:
       except Exception as identifier:
         self.flow = 0
         self.audio_received = False
-        # Send a message asking user to send an other file audio
-        # self.send_text_payload(f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis.")
+        return (f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis.", 666)
 
       else:
         self.flow = 3
@@ -82,31 +81,22 @@ class MainController:
         except Exception as e:
           self.flow = 0
           self.audio_received = False
-          print('error : {}'.format(e))
+          return (e, 666)
           
         else:
           if path_result:
-            stops = path_result['stops']
             # Send a resume template with main informations
-            stop_start = stops[0].swapcase()
-            stop_end = stops[len(stops) - 1].swapcase()
-            # element = [
-            #   {
-            #     'title': 'Trajet de {} à {}'.format(city_start, city_end),
-            #     'subtitle': 'Temps total de {} minutes'.format(path_result['min'])
-            #   }
-            # ]
-            # self.send_generic_payload(element)
+            result['start'] = city_start
+            result['end'] = city_end
+            result['total'] = path_result['min']
 
             # Create the payload for the path response
-            # elements = []
-
-            # for item in path_result['path']:
-            #   elements.append({
-            #     'title': '{} -> {}'.format(item['start'].swapcase(), item['end'].swapcase()),
-            #     'subtitle': '{} minutes'.format(item['duration'])
-            #   })
-            # self.send_generic_payload(elements)
+            for item in path_result['path']:
+              result['path'].append({
+                'start': item['start'].swapcase(),
+                'stop': item['end'].swapcase(),
+                'duration': item['duration']
+              })
 
         finally:
           voice_result = None
@@ -116,7 +106,7 @@ class MainController:
           self.flow = 0
           self.audio_received = False
           # Delete the tmp audio file
-          os.remove(pathfile + '.mp4')
+          os.remove(pathfile + '.mp3')
 
     # Returns a '200 OK' response to all requests
     return (result, 200)

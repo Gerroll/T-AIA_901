@@ -24,6 +24,13 @@ def resetNlp():
   NLP.train()
   NLP.test()
 
+""" Reset Nlp route """
+@app.route('/reset')
+def reset():
+  resetNlp()
+
+  return "Nlp a été reset avec succès."
+
 """ Home route """
 @app.route('/')
 def home():
@@ -52,9 +59,10 @@ def result():
 """ Process route """
 @app.route('/process', methods=['POST'])
 def process():
-  data = request.get_json(force=True)
+  userId = request.form['userId']
+  audio = request.files['audio']
   # get the userId in request args and check it's egal to our session['userId]
-  if session['userId'] and str(data['userId']) == str(session['userId']) and data['audio']:
+  if session['userId'] and str(userId) == str(session['userId']):
     # initialise components
     VP = VoiceProcessing()
     NLP = Nlp()
@@ -63,13 +71,17 @@ def process():
     processor = MainController(VP, NLP, PF)
 
     # dispatch request
-    res = processor.process_audio(data['audio'])
-
+    res = processor.process_audio(audio)
+    print(res)
+    
     # save result to session
     session['result'] = res[0]
 
-    # return result 'MESSAGE', STATUS_CODE
-    return dict({'status': res[1]})
+    if int(res[1]) == 666: # Error
+      return dict({'message': res[0], 'status': res[1]})
+    else:
+      # return result status 200
+      return dict({'status': res[1]})
   else:
     return dict({'status': 401})
 
