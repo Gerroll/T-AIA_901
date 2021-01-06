@@ -6,9 +6,9 @@ from .BadPhraseException import BadPhraseException
 class TestNLP(unittest.TestCase):
 
     def test_init_Nlp(self):
-        Nlp()
+        NLP = Nlp()
         # No exeption thrown
-        self.assertEqual("", "")
+        self.assertNotEqual(NLP, None)
 
     def test_predict(self):
         NLP = Nlp()
