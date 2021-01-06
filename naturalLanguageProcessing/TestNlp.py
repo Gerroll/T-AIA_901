@@ -1,4 +1,5 @@
 import unittest
+import spacy
 
 from .nlp import Nlp
 from .BadPhraseException import BadPhraseException
@@ -68,3 +69,12 @@ class TestNLP(unittest.TestCase):
                 self.assertEqual(NLP.predict(text), result)
             except BadPhraseException as e:
                 self.assertEqual(e.message, result)
+
+    def test_resolve_gare_name(self):
+        NLP = Nlp()
+        nlp = spacy.load("fr_core_news_sm")
+        doc = nlp("Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch")
+        gare = doc[7]
+
+        result = NLP.resolve_gare_name(gare, "Saint-Jean-de-Védas", "Saint-Roch", "", doc)
+        self.assertEqual(result, ("Saint-Jean-de-Védas", "gare Saint-Roch"))
