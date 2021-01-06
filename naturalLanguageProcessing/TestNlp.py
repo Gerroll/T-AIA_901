@@ -45,3 +45,26 @@ class TestNLP(unittest.TestCase):
         NLP = Nlp()
         self.assertEqual(True, NLP.is_model_created())
 
+    def test_isNotModelCreated(self):
+        NLP = Nlp("fr_core_news_sm", "", "")
+        self.assertEqual(False, NLP.isModelCreated())
+
+    def test_bad_phrase_exception(self):
+        NLP = Nlp()
+
+        list_text = {
+            "Je veux Nîmes": "Bad Phrase",
+            "Je veux un Paris - Brest": "Bad Phrase",
+            "Quel est le trajet le plus court": "Bad Phrase",
+            "J'aime Paris": "Bad Phrase",
+            "Je veux aller en vacance": "Bad Phrase",
+            "je voudrai manger une glace à Montpellier": "Bad Phrase",
+            "Une pizza 4 fromages Chtulhu Ftaghn": "Bad Phrase",
+            "je veux une saucisse de Strasbourg": "Bad Phrase"
+        }
+
+        for text, result in list_text.items():
+            try:
+                self.assertEqual(NLP.predict(text), result)
+            except BadPhraseException as e:
+                self.assertEqual(e.message, result)
