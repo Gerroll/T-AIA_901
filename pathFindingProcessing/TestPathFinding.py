@@ -4,7 +4,7 @@ from pathFindingProcessing.pathfinder import PathFinder
 
 class TestPathFinding(unittest.TestCase):
 
-    def test_upper(self):
+    def test_find_path_networkx(self):
         pf = PathFinder()
 
         result = pf.find_path_networkx("gare de paris-est", "vosges")
