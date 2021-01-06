@@ -8,6 +8,12 @@
         height: 100%;
       }
 
+      a {
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 40px;
+      }
+
       .container {
         width: 80%;
         margin: auto;
@@ -88,6 +94,9 @@
             </div>
           {% endfor %}
         </div>
+      </section>
+      <section class="container__section">
+        <a href="{{ url_for('home') }}">Voulez-vous faire une autre recherche ?</a>
       </section>
     </div>
     <input type="hidden" value="{{ session['userId'] }}" name="userId" />
