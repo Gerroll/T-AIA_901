@@ -11,7 +11,8 @@
       .container {
         width: 80%;
         margin: auto;
-        margin-top: 100px;
+        margin-top: auto;
+        margin-bottom: auto;
         padding: 20px;
         display: flex;
         flex-direction: column;
@@ -23,7 +24,8 @@
         margin: 10px;
       }
 
-      .presentation {
+      .result {
+        width: 100%;
         border: 1px solid black;
         border-radius: 5px;
         padding: 20px;
@@ -33,28 +35,59 @@
         align-items: center;
       }
 
-      .result {
-        width: 20%;
+      .result__header {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10vh;
+      }
+
+      .result__path {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .result__path__item {
+        padding: 10px;
+      }
+
+      .result__path__item__header {
         display: flex;
         align-items: center;
+      }
+      .result__path__item__header svg {
+        margin-left: auto;
+        margin-right: auto;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <section class="container__section presentation">
-        <h1>Bienvenue sur ce programme d'intelligence artificielle !</h1>
-        <p>
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-          lorem ipsum dolor sit amet, consectetur adip 
-        </p>
-      </section>
       <section class="container__section result">
-        
+        <div class="result__header">
+          <h2>Ville de départ : {{ session['result']['start'] }}</h2>
+          <h2>Ville d'arrivée : {{ session['result']['end'] }}</h2>
+          <h2>Temps total de trajet : {{ session['result']['total'] }} minutes</h2>
+        </div>
+        <div class="result__path">
+          {% for path in session['result']['path']%}
+            <div class="result__path__item">
+              <div class="result__path__item__header">
+                {% if loop.first %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#20c997" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                {% elif loop.last %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pause-circle"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#adb5bd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/></svg>
+                {% endif %}
+              </div>
+              <div class="result__path__item__body">
+                <h4>De {{ path['start'] }}</h4>
+                <h4>À {{ path['stop'] }}</h4>
+                <h4>Durée : {{ path['duration'] }} minutes</h4>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
       </section>
     </div>
     <input type="hidden" value="{{ session['userId'] }}" name="userId" />
