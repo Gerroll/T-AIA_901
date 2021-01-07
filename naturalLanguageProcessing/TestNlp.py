@@ -79,6 +79,11 @@ class TestNLP(unittest.TestCase):
         result = NLP.resolve_gare_name(gare, "Saint-Jean-de-Védas", "Saint-Roch", "", doc)
         self.assertEqual(result, ("Saint-Jean-de-Védas", "gare Saint-Roch"))
 
+    def test_resolve_many_gares_names(self):
+        NLP = Nlp()
+
+        self.assertEqual(NLP.predict("je veux aller de la gare de Lyon à la gare Saint-Roch"), ("gare de Lyon", "gare Saint-Roch"))
+
     def test_predict_with_no_start(self):
         NLP = Nlp()
 
@@ -93,3 +98,9 @@ class TestNLP(unittest.TestCase):
                 self.assertEqual(NLP.predict(text), result)
             except BadPhraseException as e:
                 self.assertEqual(e.message, result)
+
+    def test_predict_exception(self):
+        NLP = Nlp()
+        text = "Je veux aller manger"
+
+        self.assertRaises(BadPhraseException, NLP.predict, text)
