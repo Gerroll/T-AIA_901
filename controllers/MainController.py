@@ -67,7 +67,7 @@ class MainController:
       except Exception as identifier:
         self.flow = 0
         self.audio_received = False
-        return (f"Désolé, mais nous n'avons trouvé aucune correspondance pour les villes {city_start} et {city_end}, merci de recommencer avec un message audio plus précis.", 666)
+        return (f"Désolé, mais nous n'avons trouvé aucune correspondance, merci de recommencer avec un message audio plus précis.", 666)
 
       else:
         self.flow = 3
