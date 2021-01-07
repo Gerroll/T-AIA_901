@@ -60,6 +60,8 @@ class MainController:
 
       try:
         print('Start natural language processing')
+        # load model
+        self.nlpModule.loadModel()
         (city_start, city_end) = self.nlpModule.predict(voice_result)
         print(f'city start: {city_start}')
         print(f'city end: {city_end}')

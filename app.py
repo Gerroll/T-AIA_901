@@ -10,6 +10,11 @@ import sys
 import os
 import requests
 
+# Queing job
+from rq import Queue
+from worker import conn
+import redis
+
 # Flask
 from flask import Flask, session, request, render_template, redirect, url_for
 
@@ -23,6 +28,17 @@ def resetNlp():
   NLP.reset()
   NLP.train()
   NLP.test()
+
+def initialiseComponents():
+  print("initialise components")
+   # initialise components
+  VP = VoiceProcessing()
+  NLP = Nlp()
+  PF = PathFinder()
+
+  # initialise chatbot
+  processor = MainController(VP, NLP, PF)
+  return processor
 
 """ Reset Nlp route """
 @app.route('/reset')
@@ -60,6 +76,18 @@ def result():
 """ Process route """
 @app.route('/process', methods=['POST'])
 def process():
+  # Create redis queue
+  q = Queue(connection=conn)
+
+  # Queue reset nlp
+  job = q.enqueue(initialiseComponents, result_ttl=0, job_timeout=3600)
+  while job.result is None:
+    print('job not finished')
+    pass # wait till job done
+  print('worker done')
+  processor = job.result
+  print(processor)
+
   # clean session errors
   if 'errors' in session:
     session.pop('errors')
@@ -68,12 +96,6 @@ def process():
   audio = request.files['audio']
   # get the userId in request args and check it's egal to our session['userId]
   if session['userId'] and str(userId) == str(session['userId']):
-    # initialise components
-    VP = VoiceProcessing()
-    NLP = Nlp()
-    PF = PathFinder()
-    # initialise chatbot
-    processor = MainController(VP, NLP, PF)
 
     # dispatch request
     res = processor.process_audio(audio)
