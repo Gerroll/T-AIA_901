@@ -3,13 +3,14 @@ Voice recognition to return the optimal train route between two destination
 
 ## Launch the web app in dev mode
 `export FLASK_ENV=development`
+
 `flask run`
 
 ## Launch app
-python app.py
+`python app.py`
 
 ## Launch test
-python test.py
+`python test.py`
 
 ## Using Virtualenv
 ### Install virtual env
