@@ -28,9 +28,9 @@ class NetworkxGraph:
             raise Exception("path doesn't contains enough data")
         for i in range(0, len(path) - 1):
             target.append({
-              'start': path[i],
-              'end': path[i + 1],
-              'duration': self.graph.edges[path[i], path[i + 1]]['distance']
+                'start': path[i],
+                'end': path[i + 1],
+                'duration': self.graph.edges[path[i], path[i + 1]]['distance']
             })
         return target
 
