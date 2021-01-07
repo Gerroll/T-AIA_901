@@ -9,6 +9,7 @@ import os
 
 class VoiceProcessing:
     def __init__(self):
+        print('Initialisation Voice Processing')
         self.recognizer = self.init_recognizer()
 
     def from_audio(self):

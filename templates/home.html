@@ -142,11 +142,12 @@
             success: (result) => {
               console.log(result)
               // redirect to result page
-              if (result.status == 200) {
+              if (result['status'] == 200) {
                 window.location.href = '/result'
               } else {
                 // error during process
                 // TODO - display error to user
+                console.log(result['message'])
               }
             }
           })

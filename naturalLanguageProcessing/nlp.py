@@ -12,6 +12,7 @@ from .BadPhraseException import BadPhraseException
 
 class Nlp:
 	def __init__(self, default_model="fr_core_news_sm", load_dir="./naturalLanguageProcessing/nlp_model", output_dir="./naturalLanguageProcessing/nlp_model"):
+		print('Initialisation NLP')
 		self.default_model = default_model
 		self.load_dir = load_dir
 		self.output_dir = output_dir

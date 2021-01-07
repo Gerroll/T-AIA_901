@@ -43,6 +43,7 @@ def home():
   if 'result' in session:
     session.pop('result')
 
+
   # render home page
   return render_template('home.html')
 
@@ -59,6 +60,10 @@ def result():
 """ Process route """
 @app.route('/process', methods=['POST'])
 def process():
+  # clean session errors
+  if 'errors' in session:
+    session.pop('errors')
+
   userId = request.form['userId']
   audio = request.files['audio']
   # get the userId in request args and check it's egal to our session['userId]
@@ -72,16 +77,16 @@ def process():
 
     # dispatch request
     res = processor.process_audio(audio)
-    print(res)
-
-    # save result to session
-    session['result'] = res[0]
 
     if int(res[1]) == 666: # Error
-      return dict({'message': res[0], 'status': res[1]})
+      # save error message to session
+      session['errors'] = res[0]
     else:
-      # return result status 200
-      return dict({'status': res[1]})
+      # save result to session
+      session['result'] = res[0]
+
+    # return result status
+    return dict({'status': res[1]})
   else:
     return dict({'status': 401})
 

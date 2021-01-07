@@ -5,6 +5,7 @@ from pathFindingProcessing.utils import Util
 
 class PathFinder:
   def __init__(self):
+    print('Initialisation Path Finder')
     parser = StationParser()
     self.matrix_graph = parser.get_matrix_graph()
     self.raw_data = parser.get_data()

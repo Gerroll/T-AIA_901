@@ -9,7 +9,7 @@ import time
 
 class MainController:
   def __init__(self, voiceModule, nlpModule, pathModule):
-
+    print('Initialisation Main Controller')
     self.voiceModule = voiceModule
     self.nlpModule = nlpModule
     self.pathModule = pathModule
@@ -18,6 +18,7 @@ class MainController:
     self.audio_received = False
   
   def process_audio(self, data):
+    print('Start process audio')
     ts = time.time()
     pathfile = os.path.basename(f'./tmp-{ts}')
     voice_result = None
