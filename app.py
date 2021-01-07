@@ -18,6 +18,12 @@ app = Flask(__name__)
 # Set the secret key to some random bytes. Keep this really secret!
 app.secret_key = b'_8#y2o"J4Q9z\n\xec]/'
 
+# initialise components
+VP = VoiceProcessing()
+NLP = Nlp()
+PF = PathFinder()
+print('Done initialisation component')
+
 def resetNlp():
   NLP = Nlp()
   NLP.reset()
@@ -67,13 +73,8 @@ def process():
   audio = request.files['audio']
   # get the userId in request args and check it's egal to our session['userId]
   if session['userId'] and str(userId) == str(session['userId']):
-    # initialise components
-    VP = VoiceProcessing()
-    NLP = Nlp()
-    PF = PathFinder()
-    # initialise chatbot
+    # initialise main controller
     processor = MainController(VP, NLP, PF)
-
     # dispatch request
     res = processor.process_audio(audio)
 
