@@ -18,7 +18,7 @@ class MainController:
     self.audio_received = False
   
   def process_audio(self, data):
-    print('Start process audio')
+    print('Start process audio component')
     ts = time.time()
     pathfile = os.path.basename(f'./tmp-{ts}')
     voice_result = None
@@ -60,8 +60,6 @@ class MainController:
 
       try:
         print('Start natural language processing')
-        # load model
-        self.nlpModule.loadModel()
         (city_start, city_end) = self.nlpModule.predict(voice_result)
         print(f'city start: {city_start}')
         print(f'city end: {city_end}')
@@ -101,15 +99,16 @@ class MainController:
                 'duration': item['duration']
               })
 
-        finally:
-          voice_result = None
-          path_result = None
-          city_start = None
-          city_end = None
-          self.flow = 0
-          self.audio_received = False
-          # Delete the tmp audio file
-          os.remove(pathfile + '.mp3')
+    finally:
+      voice_result = None
+      path_result = None
+      city_start = None
+      city_end = None
+      self.flow = 0
+      self.audio_received = False
+
+      # Delete the tmp audio file
+      os.remove(pathfile + '.mp3')
 
     # Returns a '200 OK' response to all requests
     return (result, 200)
