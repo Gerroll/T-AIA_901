@@ -99,7 +99,7 @@ class TestNLP(unittest.TestCase):
             except BadPhraseException as e:
                 self.assertEqual(e.message, result)
 
-    def test_predict_exception(self):
+    def test_predict_bad_phrase_exception(self):
         NLP = Nlp()
         text = "Je veux aller manger"
 
