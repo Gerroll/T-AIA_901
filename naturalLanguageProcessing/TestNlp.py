@@ -104,3 +104,12 @@ class TestNLP(unittest.TestCase):
         text = "Je veux aller manger"
 
         self.assertRaises(BadPhraseException, NLP.predict, text)
+
+    def test_no_resolve_gare_name(self):
+        NLP = Nlp()
+        nlp = spacy.load("fr_core_news_sm")
+        doc = nlp("Je souhaite aller à la gare")
+        gare = doc[5]
+
+        with self.assertRaises(BadPhraseException):
+            NLP.resolve_gare_name(gare, "Montpellier", "Montpellier", "", doc)
