@@ -22,9 +22,21 @@ Result expected:
     'gare de vittel'
   ],
   'duration': {
-    'gare de paris-est->gare de chaumont': 145,
-    'gare de chaumont->gare de culmont-chalindrey': 33,
-    'gare de culmont-chalindrey->gare de vittel': 49
+    {
+      'start': 'gare de paris-est',
+      'end': 'gare de chaumont',
+      'duration': 145
+    },
+    {
+      'start': 'gare de chaumont',
+      'end': 'gare de culmont-chalindrey',
+      'duration': 33
+    },
+    {
+      'start': 'gare de culmont-chalindrey',
+      'end': 'gare de vittel',
+      'duration': 49
+    }
   }
 }
 ```
