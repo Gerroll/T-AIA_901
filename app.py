@@ -15,17 +15,17 @@ def main():
 	# NLP.train(n_iter=400)
 	###
 
-	NLP.test()
+	# NLP.test()
 
 	try:
-		# # Usecase: handling from a microphone
-		# resultFromVoice = voice_process.from_audio()
+		# Usecase: handling from a microphone
+		resultFromVoice = voice_process.from_audio()
 
-		# # Usecase: handling from an audiofile
-		# # resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
+		# Usecase: handling from an audiofile
+		# resultFromVoice = voice_process.from_file(pathfile="oss117.mp4")
 
-		# start, end = NLP.predict(resultFromVoice)
-		# print("Trajet", start, " - ", end)
+		start, end = NLP.predict(resultFromVoice)
+		print("Trajet", start, " - ", end)
 		pass
 	except sr.RequestError:
 		print("Connection problem, please try again later")
