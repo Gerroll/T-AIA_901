@@ -11,8 +11,8 @@ def main():
 	NLP = Nlp()
 
 	### a enlever si l'entrainement n'est pas nécessaire pour vous
-	NLP.reset()
-	NLP.train(n_iter=400)
+	# NLP.reset()
+	# NLP.train(n_iter=400)
 	###
 
 	NLP.test()

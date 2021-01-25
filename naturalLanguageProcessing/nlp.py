@@ -86,6 +86,8 @@ class Nlp:
 			"Je veux aller de Nîmes jusqu'à Villefranche-de-Lauragais": ("Nîmes", "Villefranche-de-Lauragais"),
 			"Je voudrais voyager de Paris jusqu'à Villefranche-de-Lauragais": ("Paris","Villefranche-de-Lauragais"),
 			"Je veux aller à Villefranche-les-maguelones" : ("Montpellier", "Villefranche-les-maguelones"),
+			"je veux aller de Nîmes à Villeneuve-lès-Maguelone": ("Nîmes", "Villeneuve-lès-Maguelone"),
+			"Je veux aller de Nîmes à Villeneuve-lès-Maguelone": ("Nîmes", "Villeneuve-lès-Maguelone"),
 		}
 		for text, expected in list_text.items():
 			try:
@@ -109,10 +111,9 @@ class Nlp:
 		End beging the end destionation of the sentence
 		Arnaud Brown
   		"""
-		doc = self.nlp_model(instruction)
-
+		self.instruction = instruction[:1].upper() + instruction[1::]
+		doc = self.nlp_model(self.instruction)
 		self.doc = doc
-		self.instruction = instruction
 
 		gare_head = []
 		is_valid_instruction = False
