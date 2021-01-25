@@ -310,8 +310,15 @@ TRAIN_DATA = [
     (
         "Je veux aller dans les Vosges depuis Paris",
         {
-            "heads": [1, 1, 1, 1, 1, 1, 1, 1],
+            "heads": [1, 1, 1, 5, 5, 2, 7, 5],
             "deps": ["-", "ROOT", "MOVE", "-", "-", "PLACE", "REVERT", "PLACE"]
+        }
+    ),
+    (
+        "Je voudrais voyager de Paris jusqu'à Nîmes",
+        {
+            "heads": [1, 1, 1, 4, 2, 7, 7, 4],
+            "deps": ["-", "ROOT", "MOVE", "-", "PLACE", "-", "-", "PLACE"]
         }
     ),
 ]
