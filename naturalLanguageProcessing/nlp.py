@@ -26,7 +26,7 @@ class Nlp:
 			print(self.loading_text + self.default_model)
 			self.nlp_model = spacy.load(self.default_model)
 
-	def train(self, n_iter=500):
+	def train(self, n_iter=400):
 		"""Load the model, set up the pipeline and train the parser.
   		Arnaud Brown"""
 

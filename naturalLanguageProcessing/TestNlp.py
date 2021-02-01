@@ -48,7 +48,7 @@ class TestNLP(unittest.TestCase):
 
     def test_isNotModelCreated(self):
         NLP = Nlp("fr_core_news_sm", "", "")
-        self.assertEqual(False, NLP.isModelCreated())
+        self.assertEqual(False, NLP.is_model_created())
 
     def test_bad_phrase_exception(self):
         NLP = Nlp()
@@ -73,10 +73,11 @@ class TestNLP(unittest.TestCase):
     def test_resolve_gare_name(self):
         NLP = Nlp()
         nlp = spacy.load("fr_core_news_sm")
-        doc = nlp("Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch")
+        instruction = "Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch"
+        doc = nlp(instruction)
         gare = doc[7]
 
-        result = NLP.resolve_gare_name(gare, "Saint-Jean-de-Védas", "Saint-Roch", "", doc)
+        result = NLP.resolve_gare_name(gare, "Saint-Jean-de-Védas", "Saint-Roch", "", doc, instruction)
         self.assertEqual(result, ("Saint-Jean-de-Védas", "gare Saint-Roch"))
 
     def test_resolve_many_gares_names(self):
@@ -108,8 +109,9 @@ class TestNLP(unittest.TestCase):
     def test_no_resolve_gare_name(self):
         NLP = Nlp()
         nlp = spacy.load("fr_core_news_sm")
-        doc = nlp("Je souhaite aller à la gare")
+        instruction = "Je souhaite aller à la gare"
+        doc = nlp(instruction)
         gare = doc[5]
 
         with self.assertRaises(BadPhraseException):
-            NLP.resolve_gare_name(gare, "Montpellier", "Montpellier", "", doc)
+            NLP.resolve_gare_name(gare, "Montpellier", "Montpellier", "", doc, instruction)
