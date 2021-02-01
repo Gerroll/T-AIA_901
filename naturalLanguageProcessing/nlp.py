@@ -26,7 +26,7 @@ class Nlp:
 			print(self.loading_text + self.default_model)
 			self.nlp_model = spacy.load(self.default_model)
 
-	def train(self, n_iter=500):
+	def train(self, n_iter=400):
 		"""Load the model, set up the pipeline and train the parser.
   		Arnaud Brown"""
 
@@ -122,7 +122,7 @@ class Nlp:
 		end = None
 		last_location = None
 		skip_next = False
-		move_verb = ['venir', 'aller', 'arriver', 'partir']
+		move_verb = ['venir', 'aller', 'arriver', 'partir', 'voyager']
 
 		for t in doc:
 			if (skip_next == True):
