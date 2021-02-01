@@ -16,13 +16,12 @@ class TestNLP(unittest.TestCase):
 
         list_text = {
 			"Je veux aller de Paris à Montpellier" : ('Paris', 'Montpellier'),
-			"Je veux aller de Paris jusqu'à Montpellier" : ('Paris', 'Montpellier'),
+			"Je veux aller de Paris jusqu'à Nice" : ('Paris', 'Nice'),
 			"Je veux aller dans les Vosges depuis Paris" : ('Paris', 'Vosges'),
 			"Je veux arriver à Paris en partant de Lille" : ('Lille', 'Paris'),
 			"Je veux arriver à la gare de Lyon en partant de la gare Saint-Roch" : ('gare Saint-Roch', 'gare de Lyon'),
 			"Je voudrai arriver à la gare de Lyon" : ('Montpellier', 'gare de Lyon'),
 			"Je souhaite aller de Saint-Jean-de-Védas à la gare Saint-Roch" : ('Saint-Jean-de-Védas', 'gare Saint-Roch'),
-			"je voudrai un aller-retour Paris Montpellier" : ('Paris', 'Montpellier'),
 			"je voudrai manger une glace à Montpellier" : "Bad Phrase",
 			"Je veux aller de Clermont-Ferrand à Paris": ('Clermont-Ferrand', 'Paris'),
 			"Je veux faire le trajet Montpellier Clermont-Ferrand": ('Montpellier', 'Clermont-Ferrand'),

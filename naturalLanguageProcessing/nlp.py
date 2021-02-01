@@ -122,7 +122,7 @@ class Nlp:
 		end = None
 		last_location = None
 		skip_next = False
-		move_verb = ['venir', 'aller', 'arriver', 'partir']
+		move_verb = ['venir', 'aller', 'arriver', 'partir', 'voyager']
 
 		for t in doc:
 			if (skip_next == True):
