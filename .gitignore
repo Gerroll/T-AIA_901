@@ -134,6 +134,5 @@ dmypy.json
 # NLP Model
 naturalLanguageProcessing/nlp_model/
 
-# Pipfile
-Pipfile
+# Pipfile lock
 Pipfile.lock

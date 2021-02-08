@@ -16,8 +16,8 @@ class NetworkxGraph:
         path: list = nx.dijkstra_path(self.graph, depart, arrive, 'distance')
         target = {
             'min': length,
-            'path': path,
-            'duration': self.build_duration(path)
+            'stops': path,
+            'path': self.build_duration(path)
         }
         return target
 
